@@ -33,6 +33,7 @@ public class AdapterPostPictures extends ArrayAdapter<BlogPictureView> {
         this.pValue = postValue;
     }
 
+    //TODO check the videoView, doesn't show the video
     @Override
     public View getView(final int position, View v, final ViewGroup parent) {
         ViewHolder holder;

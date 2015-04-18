@@ -37,8 +37,8 @@
     <!-- we can remove the cardview bg because don't use-->
     <style name="Theme_Light">
         <item name="android:windowBackground">@color/background_material_light</item>
-        <item name="android:textColorSecondary">@color/secondary_text_default_material_light</item>
-        <item name="android:textColor">@color/primary_text_default_material_light</item>
+        <item name="android:textColorSecondary">@color/primary_text_default_material_dark</item>
+        <item name="android:textColor">@color/primary_text_default_material_dark</item>
         <item name="android:textColorHint">@color/secondary_text_default_material_light</item>
         <item name="android:editTextColor">@color/primary_text_default_material_light</item>
         <item name="android:textColorLink">?colorAccent</item>
