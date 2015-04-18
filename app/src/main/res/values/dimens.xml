@@ -13,4 +13,6 @@
     <dimen name="customview_horizontal_margin">18dp</dimen>
     <dimen name="customview_vertical_margin">14dp</dimen>
     <dimen name="customview_vertical_margin_close">4dp</dimen>
+    <dimen name="customview_image_horizontal_margin">4dp</dimen>
+    <dimen name="customview_image_vertical_margin">4dp</dimen>
 </resources>

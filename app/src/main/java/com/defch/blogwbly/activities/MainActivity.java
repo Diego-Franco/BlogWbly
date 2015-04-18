@@ -19,10 +19,12 @@ import com.defch.blogwbly.model.BlogPost;
 import java.util.ArrayList;
 
 import butterknife.InjectView;
+import butterknife.Optional;
 
 
 public class MainActivity extends BaseActivity {
 
+    @Optional
     @InjectView(R.id.main_img_empty)
     ImageView emptyImg;
 

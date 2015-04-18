@@ -20,16 +20,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.adapters.AdapterPostPictures;
+import com.defch.blogwbly.ifaces.IfaceSnapMap;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.BlogPictureView;
 import com.defch.blogwbly.ui.FloatingButton;
@@ -46,7 +48,7 @@ import butterknife.OnClick;
 /**
  * Created by DiegoFranco on 4/17/15.
  */
-public class PostActivity extends BaseActivity implements View.OnClickListener{
+public class PostActivity extends BaseActivity implements View.OnClickListener, IfaceSnapMap{
 
     private static final String POST_VALUE = "PostValue";
     private static final String POST_OBJECT = "PostObject";
@@ -56,10 +58,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener{
     private static final int GALLERY_REQUEST = 1003;
     private static final int MAP_REQUEST = 1004;
 
-    //test
-@InjectView(R.id.img)
-ImageView img;
-    //test
 
     @InjectView(R.id.mtoolbar)
     Toolbar mToolBar;
@@ -108,6 +106,7 @@ ImageView img;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_post_activity);
         setupToolbar();
+        pictures = new ArrayList<>();
         Resources res = getResources();
         int accentColor = res.getColor(theme.accentColor);
         addButton.setColor(accentColor);
@@ -190,6 +189,7 @@ ImageView img;
                 animateUploadMenu();
                 break;
             case R.id.float_map_btn:
+                app.setIfaceSnapMap(this);
                 newIntent(MapsActivity.class);
                 animateUploadMenu();
                 break;
@@ -316,6 +316,7 @@ ImageView img;
         }
     }
 
+    //TODO get the menuItem and show edit option when the user click save
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -335,6 +336,9 @@ ImageView img;
             case R.id.action_save:
                 //save the post
                 break;
+            case R.id.action_edit:
+
+                break;
             default:
                 return true;
         }
@@ -343,44 +347,70 @@ ImageView img;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        BlogPictureView pictureView = new BlogPictureView(getApplicationContext());
         Bitmap bmp;
-        switch (requestCode) {
-            case CAMERA_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    Bundle extras = data.getExtras();
-                    bmp = (Bitmap) extras.get("data");
-                    //put image on the view
-                }
-                break;
-            case VIDEO_REQUEST:
-                if(resultCode == RESULT_OK) {
-                    Uri videoUri = data.getData();
-                    //put the video on the view
-                    //mVideoView.setVideoURI(videoUri);
-                }
-                break;
-            case GALLERY_REQUEST:
-                Uri selectedMediaUri = data.getData();
-                if (selectedMediaUri.toString().contains("images")) {
-                    bmp = loadImage(selectedMediaUri);
-                } else  if (selectedMediaUri.toString().contains("video")) {
-
-                }
-                break;
+        if(data != null) {
+            switch (requestCode) {
+                case CAMERA_REQUEST:
+                    if (resultCode == RESULT_OK) {
+                        Bundle extras = data.getExtras();
+                        bmp = (Bitmap) extras.get("data");
+                        pictureView.setPicture(bmp);
+                        pictures.add(pictureView);
+                        setAdapter();
+                    }
+                    break;
+                case VIDEO_REQUEST:
+                    if (resultCode == RESULT_OK) {
+                        Uri videoUri = data.getData();
+                        pictureView.setVideo(videoUri);
+                        pictures.add(pictureView);
+                        setAdapter();
+                    }
+                    break;
+                case GALLERY_REQUEST:
+                    Uri selectedMediaUri = data.getData();
+                    if (selectedMediaUri.toString().contains("images")) {
+                        bmp = loadImage(selectedMediaUri);
+                        pictureView.setPicture(bmp);
+                    } else if (selectedMediaUri.toString().contains("video")) {
+                        pictureView.setVideo(selectedMediaUri);
+                    }
+                    pictures.add(pictureView);
+                    setAdapter();
+                    break;
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public ImageLoad snapTaked = new ImageLoad() {
-        @Override
-        public void oadImage(Bitmap bmp) {
-           img.setImageBitmap(bmp);
+    private void setAdapter() {
+        if(pictures != null && pictures.size() > 0) {
+            if(adapterPictures == null) {
+                adapterPictures = new AdapterPostPictures(getApplicationContext(), pictures, pValue);
+                mListView.setAdapter(adapterPictures);
+                mListView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        return false;
+                    }
+                });
+                setListViewHeightBasedOnChildren(mListView);
+            } else {
+                adapterPictures.notifyDataSetChanged();
+            }
         }
-    };
+    }
 
-    public interface ImageLoad   {
-        public void oadImage(Bitmap bmp);
+    //TODO implement snap picture from map
+    @Override
+    public void takeSnapMap(Bitmap bitmap) {
+        BlogPictureView pictureView = new BlogPictureView(getApplicationContext());
+        pictureView.setPicture(bitmap);
+        pictures.add(pictureView);
+        setAdapter();
     }
 
     public String getPath(Uri uri) {
@@ -421,5 +451,29 @@ ImageView img;
         return bitmap;
     }
 
+    /**** Method for Setting the Height of the ListView dynamically.
+     **** Hack to fix the issue of not showing all the items of the ListView
+     **** when placed inside a ScrollView  ****/
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
 
 }

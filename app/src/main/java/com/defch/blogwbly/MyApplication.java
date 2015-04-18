@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.defch.blogwbly.activities.SettingsActivity;
+import com.defch.blogwbly.ifaces.IfaceSnapMap;
 import com.defch.blogwbly.ui.WeeblyThemes;
 import com.defch.blogwbly.util.SqlHelper;
 
@@ -22,6 +23,8 @@ public class MyApplication extends Application {
     private SqlHelper sqlHelper;
 
     private SharedPreferences mPref;
+
+    private IfaceSnapMap ifaceSnapMap;
 
     public int sdkVersion = Build.VERSION.SDK_INT;
     private WeeblyThemes theme = WeeblyThemes.WEEBLY;
@@ -61,6 +64,14 @@ public class MyApplication extends Application {
 
     public SqlHelper getSql() {
         return sqlHelper;
+    }
+
+    public IfaceSnapMap getIfaceSnapMap() {
+        return ifaceSnapMap;
+    }
+
+    public void setIfaceSnapMap(IfaceSnapMap ifaceSnapMap) {
+        this.ifaceSnapMap = ifaceSnapMap;
     }
 
     /**

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.VideoView;
 
 import com.defch.blogwbly.R;
+import com.defch.blogwbly.activities.PostActivity;
 import com.defch.blogwbly.ui.BlogPictureView;
 
 import java.util.ArrayList;
@@ -20,15 +21,20 @@ public class AdapterPostPictures extends ArrayAdapter<BlogPictureView> {
 
     private Context context;
     private ArrayList<BlogPictureView> pictures;
+    private PostActivity.PostValue pValue;
 
-    public AdapterPostPictures(Context context, ArrayList<BlogPictureView> objects) {
+    private View view;
+    private ViewGroup vG;
+
+    public AdapterPostPictures(Context context, ArrayList<BlogPictureView> objects, PostActivity.PostValue postValue) {
         super(context, 0, objects);
         this.context = context;
         this.pictures = objects;
+        this.pValue = postValue;
     }
 
     @Override
-    public View getView(int position, View v, final ViewGroup parent) {
+    public View getView(final int position, View v, final ViewGroup parent) {
         ViewHolder holder;
         BlogPictureView pictureView = pictures.get(position);
         if(v == null) {
@@ -36,7 +42,9 @@ public class AdapterPostPictures extends ArrayAdapter<BlogPictureView> {
             holder = new ViewHolder();
             holder.imageView = (ImageView)v.findViewById(R.id.widget_img);
             holder.videoView = (VideoView)v.findViewById(R.id.widget_video);
-            pictureView.setViews(v, parent);
+            holder.bntClose = (ImageView)v.findViewById(R.id.widget_close_btn);
+            view = v;
+            vG = parent;
             v.setTag(holder);
         } else {
             holder = (ViewHolder) v.getTag();
@@ -44,18 +52,30 @@ public class AdapterPostPictures extends ArrayAdapter<BlogPictureView> {
 
         if(pictureView != null) {
             if(pictureView.getPicture() != null) {
+                holder.videoView.setVisibility(View.GONE);
                 holder.imageView.setImageBitmap(pictureView.getPicture());
             } else if(pictureView.getVideo() != null) {
-                holder.videoView.setVideoURI(pictureView.getVideo());
+                holder.imageView.setVisibility(View.GONE);
+                holder.videoView.setVideoPath(pictureView.getVideo().getPath());
             }
-
+            if(pValue == PostActivity.PostValue.VIEW) {
+                holder.bntClose.setVisibility(View.GONE);
+            } else {
+                holder.bntClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pictures.remove(position);
+                        notifyDataSetChanged();
+                    }
+                });
+            }
         }
-
         return v;
     }
 
     private static class ViewHolder {
         ImageView imageView;
         VideoView videoView;
+        ImageView bntClose;
     }
 }

@@ -10,4 +10,10 @@
         android:orderInCategory="100"
         app:showAsAction="ifRoom"/>
 
+    <item android:id="@+id/action_edit"
+        android:title="@string/action_edit"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:orderInCategory="200"
+        app:showAsAction="ifRoom"/>
+
 </menu>

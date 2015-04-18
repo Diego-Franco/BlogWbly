@@ -1,32 +1,44 @@
 package com.defch.blogwbly.activities;
 
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import com.defch.blogwbly.R;
+import com.defch.blogwbly.ifaces.IfaceSnapMap;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class MapsActivity extends BaseActivity implements View.OnClickListener{
+public class MapsActivity extends BaseActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
-    public static String MAP_LOCATION = "map_location";
-    public static String MAP = "snapMap";
-    private static final int MAP_REQUEST = 1004;
+    private static final String REQUESTING_LOCATION_UPDATES_KEY = "location_updates";
+    private static final String LOCATION_KEY = "location";
 
-    private static final int WIDTH_PX = 400;
+    private static final int WIDTH_PX = 500;
     private static final int HEIGHT_PX = 400;
 
     @InjectView(R.id.map_set_btn)
     Button setBtn;
 
-    PostActivity.ImageLoad imageLoad;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private LocationRequest mLocationRequest;
+    private boolean startLocationRequest;
+
+    private IfaceSnapMap snapMap;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
@@ -37,22 +49,20 @@ public class MapsActivity extends BaseActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_gmap_activity);
+        updateValuesFromBundle(savedInstanceState);
         setUpMapIfNeeded();
 
         Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
         bmp = Bitmap.createBitmap(WIDTH_PX, HEIGHT_PX, conf); // this creates a MUTABLE bitmap
+
+        snapMap = app.getIfaceSnapMap();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setUpMapIfNeeded();
-    }
 
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
+     * call {@link #setUpMapIfNeeded()} once when {@link #mMap} is not null.
      * <p/>
      * If it isn't installed {@link SupportMapFragment} (and
      * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
@@ -71,12 +81,26 @@ public class MapsActivity extends BaseActivity implements View.OnClickListener{
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.getUiSettings().setZoomGesturesEnabled(true);
-            // Check if we were successful in obtaining the map.
+            mMap.setMyLocationEnabled(true);
+            buildGoogleApiClient();
 
         }
     }
 
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
 
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
 
     @OnClick(R.id.map_set_btn)
     @Override
@@ -92,11 +116,94 @@ public class MapsActivity extends BaseActivity implements View.OnClickListener{
         @Override
         public void onSnapshotReady(Bitmap bitmap) {
             if(bitmap != null) {
-                //return bitmap
+                snapMap.takeSnapMap(bitmap);
                 MapsActivity.this.finish();
             }
         }
     };
 
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        startLocationRequest = true;
+    }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            updateUI();
+        }
+        createLocationRequest();
+        if(!startLocationRequest) {
+            startLocationUpdates();
+        }
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {}
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {}
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+        updateUI();
+    }
+
+    private void updateUI() {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 10);
+        mMap.animateCamera(cameraUpdate);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setUpMapIfNeeded();
+        if (mGoogleApiClient.isConnected() && !startLocationRequest) {
+            startLocationUpdates();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopLocationUpdates();
+    }
+
+    protected void stopLocationUpdates() {
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(REQUESTING_LOCATION_UPDATES_KEY,
+                startLocationRequest);
+        savedInstanceState.putParcelable(LOCATION_KEY, mLastLocation);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private void updateValuesFromBundle(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            // Update the value of mRequestingLocationUpdates from the Bundle, and
+            // make sure that the Start Updates and Stop Updates buttons are
+            // correctly enabled or disabled.
+            if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
+                startLocationRequest = savedInstanceState.getBoolean(REQUESTING_LOCATION_UPDATES_KEY);
+            }
+
+            // Update the value of mCurrentLocation from the Bundle and update the
+            // UI to show the correct latitude and longitude.
+            if (savedInstanceState.keySet().contains(LOCATION_KEY)) {
+                // Since LOCATION_KEY was found in the Bundle, we can be sure that
+                // mCurrentLocationis not null.
+                mLastLocation = savedInstanceState.getParcelable(LOCATION_KEY);
+            }
+
+            updateUI();
+        }
+    }
 }
