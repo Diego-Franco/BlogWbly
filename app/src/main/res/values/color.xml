@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#3F51B5</color>
+    <color name="primary_dark">#303F9F</color>
+    <color name="primary_light">#C5CAE9</color>
+    <color name="accent">#607D8B</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#B6B6B6</color>
+
+    <color name="card_background">#ffffff</color>
+    <color name="card_shadow_1">#d4d4d4</color>
+    <color name="card_shadow_2">#dddddd</color>
+    <color name="card_detailing">#eee</color>
+
+    <color name="bg_card">#F2F2F2</color>
+    <color name="bg_layout">#0D000000</color>
+
+    <!-- Theme Colors -->
+    <color name="theme_blue_primary">#2196F3</color>
+    <color name="theme_blue_dark">#1976D2</color>
+    <color name="theme_blue_accent">#FF4081</color>
+
+    <color name="theme_orange_primary">#FF5722</color>
+    <color name="theme_orange_dark">#E64A19</color>
+    <color name="theme_light_blue_accent">#FF4081</color>
+
+    <color name="theme_cyan_primary">#00BCD4</color>
+    <color name="theme_cyan_dark">#0097A7</color>
+    <color name="theme_cyan_accent">#FF4081</color>
+
+    <color name="theme_green_primary">#4CAF50</color>
+    <color name="theme_green_dark">#388E3C</color>
+    <color name="theme_green_accent">#FF4081</color>
+
+    <color name="theme_teal_primary">#009688</color>
+    <color name="theme_teal_dark">#00796B</color>
+    <color name="theme_teal_accent">#FF4081</color>
+
+    <color name="theme_red_primary">#da4336</color>
+    <color name="theme_red_dark">#b93221</color>
+    <color name="theme_red_accent">#3D5AFE</color>
+
+    <color name="theme_pink_primary">#E91E63</color>
+    <color name="theme_pink_dark">#C2185B</color>
+    <color name="theme_pink_accent">#3D5AFE</color>
+
+    <color name="theme_purple_primary">#673AB7</color>
+    <color name="theme_purple_dark">#512DA8</color>
+    <color name="theme_purple_accent">#FF4081</color>
+
+    <color name="theme_grey_primary">#616161</color>
+    <color name="theme_grey_dark">#424242</color>
+    <color name="theme_grey_accent">#00E676</color>
+
+    <color name="theme_black_primary">#242424</color>
+    <color name="theme_black_dark">#000000</color>
+    <color name="theme_black_accent">#ee9a00</color>
+</resources>

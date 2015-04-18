@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
+    </style>
+
+    <style name="RadioButton.Style.Light" parent="@android:style/Widget.CompoundButton.RadioButton">
+        <item name="android:textColor">@color/primary_text_default_material_light</item>
+    </style>
+
+    <style name="RadioButton.Style.Dark" parent="@android:style/Widget.CompoundButton.RadioButton">
+        <item name="android:textColor">@color/primary_text_default_material_dark</item>
+    </style>
+
+    <style name="CheckBox.Style.Light" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:textColor">@color/primary_text_default_material_light</item>
+    </style>
+
+    <style name="CheckBox.Style.Dark" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:textColor">@color/primary_text_default_material_dark</item>
+    </style>
+
+
+    <style name="PopupMenuStyle.Dark" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:background">@color/background_material_dark</item>
+    </style>
+
+    <style name="PopupMenuStyle.Light" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:background">@color/background_material_light</item>
+    </style>
+
+</resources>

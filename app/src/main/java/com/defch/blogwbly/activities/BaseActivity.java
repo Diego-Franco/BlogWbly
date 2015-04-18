@@ -1,0 +1,98 @@
+package com.defch.blogwbly.activities;
+
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+
+import com.defch.blogwbly.MyApplication;
+import com.defch.blogwbly.model.BlogPost;
+import com.defch.blogwbly.ui.WeeblyThemes;
+
+import butterknife.ButterKnife;
+
+/**
+ * Created by DiegoFranco on 4/16/15.
+ */
+public class BaseActivity extends ActionBarActivity {
+    private final String TAG = getClass().getSimpleName();
+    private static final String POST_VALUE = "PostValue";
+    private static final String POST_OBJECT = "PostObject";
+
+    private boolean mIsLandscape = false;
+
+    public MyApplication app;
+    public WeeblyThemes theme;
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        ButterKnife.inject(this);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        app = MyApplication.getInstance(getApplicationContext());
+        theme = app.getWTheme();
+        theme.applyTheme(getTheme());
+        super.onCreate(savedInstanceState);
+        mIsLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    public void newIntent(Class clazz) {
+        Intent intent = new Intent(this, clazz);
+        startActivity(intent);
+    }
+
+    public void newIntent(Class clazz, PostActivity.PostValue postValue) {
+        Intent intent = new Intent(this, clazz);
+        intent.putExtra(POST_VALUE, postValue);
+        startActivity(intent);
+    }
+
+    public void newIntent(Class clazz, PostActivity.PostValue postValue, BlogPost post) {
+        Intent intent = new Intent(this, clazz);
+        intent.putExtra(POST_VALUE, postValue);
+        intent.putExtra(POST_OBJECT, post);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public boolean isLandscape() {
+        return mIsLandscape;
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void setStatusBarColor(int color) {
+        if (app.sdkVersion >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(color);
+        }
+    }
+
+}

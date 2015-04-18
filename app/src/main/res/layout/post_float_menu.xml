@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+    <com.defch.blogwbly.ui.FloatingButton
+        android:id="@+id/float_video_btn"
+        android:layout_width="@dimen/f_button_radius_smaller"
+        android:layout_height="@dimen/f_button_radius_smaller"
+        android:layout_gravity="center_horizontal|bottom"
+        android:visibility="gone"
+        app:drawable="@mipmap/ic_video_light"
+        app:shadowColor="@android:color/black" />
+
+    <com.defch.blogwbly.ui.FloatingButton
+        android:id="@+id/float_camera_btn"
+        android:layout_width="@dimen/f_button_radius_smaller"
+        android:layout_height="@dimen/f_button_radius_smaller"
+        android:layout_gravity="center_horizontal|bottom"
+        android:visibility="gone"
+        app:drawable="@mipmap/ic_camera_light"
+        app:shadowColor="@android:color/black" />
+
+    <com.defch.blogwbly.ui.FloatingButton
+        android:id="@+id/float_gallery_btn"
+        android:layout_width="@dimen/f_button_radius_smaller"
+        android:layout_height="@dimen/f_button_radius_smaller"
+        android:layout_gravity="center_horizontal|bottom"
+        android:visibility="gone"
+        app:drawable="@mipmap/ic_gallery_light"
+        app:shadowColor="@android:color/black" />
+
+    <com.defch.blogwbly.ui.FloatingButton
+        android:id="@+id/float_map_btn"
+        android:layout_width="@dimen/f_button_radius_smaller"
+        android:layout_height="@dimen/f_button_radius_smaller"
+        android:layout_gravity="center_horizontal|bottom"
+        android:visibility="gone"
+        app:drawable="@mipmap/ic_map_light"
+        app:shadowColor="@android:color/black" />
+
+    <com.defch.blogwbly.ui.FloatingButton
+        android:id="@+id/float_add_btn"
+        android:layout_width="@dimen/f_button_radius"
+        android:layout_height="@dimen/f_button_radius"
+        android:layout_gravity="bottom"
+        app:drawable="@mipmap/ic_add"
+        app:shadowColor="@android:color/black"/>
+
+</FrameLayout>
