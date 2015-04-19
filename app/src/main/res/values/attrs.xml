@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources >
 
     <declare-styleable name="FloatingButton">
         <attr name="drawable" format="integer" />
@@ -9,14 +9,5 @@
         <attr name="shadowDy" format="float" />
         <attr name="shadowColor" format="integer" />
     </declare-styleable>
-
-   <!-- <declare-styleable name="PictureView">
-        <attr name="drawable" format="integer" />
-        <attr name="fabColor" format="color" />
-        <attr name="shadowRadius" format="float" />
-        <attr name="shadowDx" format="float" />
-        <attr name="shadowDy" format="float" />
-        <attr name="shadowColor" format="integer" />
-    </declare-styleable>-->
 
 </resources>

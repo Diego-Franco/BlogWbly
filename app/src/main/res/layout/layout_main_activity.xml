@@ -27,7 +27,6 @@
             android:src="@mipmap/ic_empty"
             android:visibility="visible"/>
 
-
     </LinearLayout>
 
 </LinearLayout>

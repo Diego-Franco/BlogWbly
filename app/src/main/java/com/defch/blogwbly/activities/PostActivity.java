@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -15,22 +14,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.adapters.AdapterPostPictures;
+import com.defch.blogwbly.fragments.FragmentContainer;
 import com.defch.blogwbly.ifaces.IfaceSnapMap;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.BlogPictureView;
@@ -50,17 +40,13 @@ import butterknife.OnClick;
  */
 public class PostActivity extends BaseActivity implements View.OnClickListener, IfaceSnapMap{
 
-    private static final String POST_VALUE = "PostValue";
-    private static final String POST_OBJECT = "PostObject";
-    public static String MAP = "snapMap";
+    private static final String KEY_LAYOUT = "key_layout";
+    private static final String POST_VALUE = "post_value";
+    private static final String POST_OBJECT = "post_object";
     private static final int CAMERA_REQUEST = 1001;
     private static final int VIDEO_REQUEST = 1002;
     private static final int GALLERY_REQUEST = 1003;
-    private static final int MAP_REQUEST = 1004;
 
-
-    @InjectView(R.id.mtoolbar)
-    Toolbar mToolBar;
     @InjectView(R.id.floatMenu)
     View mUploadMenu;
     @InjectView(R.id.float_video_btn)
@@ -74,17 +60,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     @InjectView(R.id.float_add_btn)
     FloatingButton addButton;
 
-    @InjectView(R.id.post_textview_title)
-    TextView mTVTitle;
-    @InjectView(R.id.post_textview_text)
-    TextView mTVText;
-    @InjectView(R.id.post_edittext_title)
-    EditText mETTitle;
-    @InjectView(R.id.post_edittext_text)
-    EditText mETText;
-    @InjectView(R.id.post_listview)
-    ListView mListView;
-
+    //float button values
     private float mUploadButtonHeight;
     private float mUploadMenuButtonHeight;
     private int mNavBarHeight = -1;
@@ -94,7 +70,9 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     private AdapterPostPictures adapterPictures;
     private ArrayList<BlogPictureView> pictures;
 
+    private int viewIndex;
     private PostValue pValue;
+    //TODO save the viewLayoutId on db
     private BlogPost post;
 
     public enum PostValue {
@@ -105,7 +83,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_post_activity);
-        setupToolbar();
         pictures = new ArrayList<>();
         Resources res = getResources();
         int accentColor = res.getColor(theme.accentColor);
@@ -117,54 +94,10 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         mUploadButtonHeight = getResources().getDimension(R.dimen.f_button_radius);
         mUploadMenuButtonHeight = getResources().getDimension(R.dimen.f_button_radius_smaller);
 
-        mETTitle.setFocusableInTouchMode(false);
-        mETTitle.setFocusable(false);
-        mETTitle.setFocusableInTouchMode(true);
-        mETTitle.setFocusable(true);
-        mETText.setFocusableInTouchMode(false);
-        mETText.setFocusable(false);
-        mETText.setFocusableInTouchMode(true);
-        mETText.setFocusable(true);
-
-        mETTitle.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                animateUploadMenuButton(true);
-                return true;
-            }
-        });
-
-
         pValue = (PostValue) getIntent().getSerializableExtra(POST_VALUE);
+        viewIndex = getIntent().getIntExtra(KEY_LAYOUT, Integer.MIN_VALUE);
+        getFragmentManager().beginTransaction().replace(R.id.container_views, FragmentContainer.createInstance(viewIndex,pValue)).commit();
 
-        if(pValue != null) {
-
-            if(pValue == PostValue.CREATE) {
-                // create new model
-                mTVTitle.setVisibility(View.GONE);
-                mTVText.setVisibility(View.GONE);
-                mETTitle.setVisibility(View.VISIBLE);
-                mETText.setVisibility(View.VISIBLE);
-
-
-            }  else if(pValue == PostValue.EDIT){
-                // edit the model
-                post = (BlogPost) getIntent().getParcelableExtra(POST_OBJECT);
-            } else if(pValue == PostValue.VIEW) {
-                // load the model
-                post = (BlogPost) getIntent().getParcelableExtra(POST_OBJECT);
-
-            }
-        }
-
-    }
-
-    private void setupToolbar() {
-        setStatusBarColor(getResources().getColor(app.getWTheme().darkColor));
-        mToolBar.setBackgroundColor(getResources().getColor(app.getWTheme().primaryColor));
-        setSupportActionBar(mToolBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     @OnClick({R.id.float_add_btn, R.id.float_video_btn, R.id.float_camera_btn, R.id.float_gallery_btn, R.id.float_map_btn})
@@ -194,26 +127,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                 animateUploadMenu();
                 break;
         }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-
-        View v = getCurrentFocus();
-        boolean ret = super.dispatchTouchEvent(event);
-        if (v instanceof EditText) {
-            View w = getCurrentFocus();
-            int scrcoords[] = new int[2];
-            w.getLocationOnScreen(scrcoords);
-            float x = event.getRawX() + w.getLeft() - scrcoords[0];
-            float y = event.getRawY() + w.getTop() - scrcoords[1];
-            if (event.getAction() == MotionEvent.ACTION_UP && (x < w.getLeft() || x >= w.getRight() || y < w.getTop() || y > w.getBottom()) ) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(), 0);
-                animateUploadMenuButton(false);
-            }
-        }
-        return ret;
     }
 
     /**
@@ -295,6 +208,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
+    //you can hide or show float button
     private void animateUploadMenuButton(boolean shouldShow) {
         if (!shouldShow && uploadMenuShowing) {
             float hideDistance;
@@ -316,34 +230,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-    //TODO get the menuItem and show edit option when the user click save
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_post, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            case R.id.action_save:
-                //save the post
-                break;
-            case R.id.action_edit:
-
-                break;
-            default:
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -389,22 +275,13 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         if(pictures != null && pictures.size() > 0) {
             if(adapterPictures == null) {
                 adapterPictures = new AdapterPostPictures(getApplicationContext(), pictures, pValue);
-                mListView.setAdapter(adapterPictures);
-                mListView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        return false;
-                    }
-                });
-                setListViewHeightBasedOnChildren(mListView);
+                //mListView.setAdapter(adapterPictures);
             } else {
                 adapterPictures.notifyDataSetChanged();
             }
         }
     }
 
-    //TODO implement snap picture from map
     @Override
     public void takeSnapMap(Bitmap bitmap) {
         BlogPictureView pictureView = new BlogPictureView(getApplicationContext());
@@ -444,36 +321,11 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
         return bitmap;
     }
 
-    /**** Method for Setting the Height of the ListView dynamically.
-     **** Hack to fix the issue of not showing all the items of the ListView
-     **** when placed inside a ScrollView  ****/
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-    }
 
 }

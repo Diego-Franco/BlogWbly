@@ -23,8 +23,6 @@ public class AdapterPostPictures extends ArrayAdapter<BlogPictureView> {
     private ArrayList<BlogPictureView> pictures;
     private PostActivity.PostValue pValue;
 
-    private View view;
-    private ViewGroup vG;
 
     public AdapterPostPictures(Context context, ArrayList<BlogPictureView> objects, PostActivity.PostValue postValue) {
         super(context, 0, objects);
@@ -44,8 +42,6 @@ public class AdapterPostPictures extends ArrayAdapter<BlogPictureView> {
             holder.imageView = (ImageView)v.findViewById(R.id.widget_img);
             holder.videoView = (VideoView)v.findViewById(R.id.widget_video);
             holder.bntClose = (ImageView)v.findViewById(R.id.widget_close_btn);
-            view = v;
-            vG = parent;
             v.setTag(holder);
         } else {
             holder = (ViewHolder) v.getTag();

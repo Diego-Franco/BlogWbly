@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <array name="view_arrays">
+        <item>@mipmap/ic_container1</item>
+        <item>@mipmap/ic_container2</item>
+        <item>@mipmap/ic_container3</item>
+        <item>@mipmap/ic_container4</item>
+        <item>@mipmap/ic_container5</item>
+    </array>
+
     <string-array name="pref_theme_keys" translatable="false">
         <item>weebly</item>
         <item>black</item>

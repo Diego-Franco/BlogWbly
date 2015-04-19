@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 import com.defch.blogwbly.MyApplication;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.WeeblyThemes;
+import com.defch.blogwbly.util.LogUtil;
 
 import butterknife.ButterKnife;
 
@@ -18,8 +19,10 @@ import butterknife.ButterKnife;
  */
 public class BaseActivity extends ActionBarActivity {
     private final String TAG = getClass().getSimpleName();
-    private static final String POST_VALUE = "PostValue";
-    private static final String POST_OBJECT = "PostObject";
+
+    private static final String KEY_LAYOUT = "key_layout";
+    private static final String POST_VALUE = "post_value";
+    private static final String POST_OBJECT = "post_object";
 
     private boolean mIsLandscape = false;
 
@@ -28,6 +31,7 @@ public class BaseActivity extends ActionBarActivity {
 
     @Override
     public void setContentView(int layoutResID) {
+        LogUtil.v(TAG, "contentView");
         super.setContentView(layoutResID);
         ButterKnife.inject(this);
     }
@@ -49,6 +53,13 @@ public class BaseActivity extends ActionBarActivity {
     public void newIntent(Class clazz, PostActivity.PostValue postValue) {
         Intent intent = new Intent(this, clazz);
         intent.putExtra(POST_VALUE, postValue);
+        startActivity(intent);
+    }
+
+    public void newIntent(Class clazz, PostActivity.PostValue postValue, int position) {
+        Intent intent = new Intent(this, clazz);
+        intent.putExtra(POST_VALUE, postValue);
+        intent.putExtra(KEY_LAYOUT, position);
         startActivity(intent);
     }
 

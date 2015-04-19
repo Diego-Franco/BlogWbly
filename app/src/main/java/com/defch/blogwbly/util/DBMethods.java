@@ -15,12 +15,18 @@ public class DBMethods {
 
         public static final String COLUMN_PICTURE = "picture";
 
+        public static final String COLUMN_LATITUDE = "latitude";
+
+        public static final String COLUMN_LONGITUDE = "longitude";
+
         public static final String CREATE_TABLE_SQL =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
                 " (" + _ID + " INTEGER PRIMARY KEY ASC AUTOINCREMENT, " +
                 COLUMN_TITLE + " TEXT NOT NULL," +
                 COLUMN_DESCRIPTION + " TEXT NOT NULL," +
-                COLUMN_PICTURE + " BLOB);";
+                COLUMN_PICTURE + " BLOB," +
+                COLUMN_LATITUDE + " INTEGER," +
+                COLUMN_LONGITUDE + " INTEGER);";
 
         public static int COLUMN_INDEX_ID = 0;
 
@@ -29,6 +35,10 @@ public class DBMethods {
         public static int COLUMN_INDEX_DESCRIPTION = 2;
 
         public static int COLUMN_INDEX_PICTURE = 3;
+
+        public static int COLUMN_INDEX_LATITUDE = 4;
+
+        public static int COLUMN_INDEX_LONGITUDE = 5;
 
         public static final String GET_POST_SQL = "SELECT * FROM " + TABLE_NAME
                 + " ORDER BY " + _ID + " COLLATE NOCASE ASC";

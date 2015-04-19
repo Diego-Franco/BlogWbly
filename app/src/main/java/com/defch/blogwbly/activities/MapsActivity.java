@@ -3,8 +3,9 @@ package com.defch.blogwbly.activities;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.ifaces.IfaceSnapMap;
@@ -20,9 +21,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.InjectView;
-import butterknife.OnClick;
 
-public class MapsActivity extends BaseActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class MapsActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "location_updates";
     private static final String LOCATION_KEY = "location";
@@ -30,8 +30,8 @@ public class MapsActivity extends BaseActivity implements View.OnClickListener, 
     private static final int WIDTH_PX = 500;
     private static final int HEIGHT_PX = 400;
 
-    @InjectView(R.id.map_set_btn)
-    Button setBtn;
+    @InjectView(R.id.mtoolbar)
+    Toolbar mToolBar;
 
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -43,12 +43,12 @@ public class MapsActivity extends BaseActivity implements View.OnClickListener, 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
     private Bitmap bmp;
-    private PostActivity postActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_gmap_activity);
+        setupToolbar();
         updateValuesFromBundle(savedInstanceState);
         setUpMapIfNeeded();
 
@@ -58,6 +58,13 @@ public class MapsActivity extends BaseActivity implements View.OnClickListener, 
         snapMap = app.getIfaceSnapMap();
     }
 
+    private void setupToolbar() {
+        setStatusBarColor(getResources().getColor(app.getWTheme().darkColor));
+        mToolBar.setBackgroundColor(getResources().getColor(app.getWTheme().primaryColor));
+        setSupportActionBar(mToolBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
 
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
@@ -102,14 +109,29 @@ public class MapsActivity extends BaseActivity implements View.OnClickListener, 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    @OnClick(R.id.map_set_btn)
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.map_set_btn:
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_map, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.action_map:
                 mMap.snapshot(callback, bmp);
                 break;
+            default:
+                return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {

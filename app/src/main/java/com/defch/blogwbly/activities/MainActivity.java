@@ -1,5 +1,8 @@
 package com.defch.blogwbly.activities;
 
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,9 +14,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.adapters.AdapterBlogList;
+import com.defch.blogwbly.adapters.LayoutsViewAdapter;
 import com.defch.blogwbly.model.BlogPost;
 
 import java.util.ArrayList;
@@ -33,6 +41,10 @@ public class MainActivity extends BaseActivity {
 
     @InjectView(R.id.mtoolbar)
     Toolbar mToolBar;
+    @InjectView(R.id.pb)
+    ProgressBar progressBar;
+
+    private ArrayList<Bitmap> bitmaps;
 
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -46,6 +58,7 @@ public class MainActivity extends BaseActivity {
         recyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
+        new LoadLayoutsViewTask().execute();
         new LoadPostTask().execute();
 
     }
@@ -65,14 +78,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        //noinspection SimplifiableIfStatement
         switch (item.getItemId()) {
             case R.id.action_add:
-                newIntent(PostActivity.class, PostActivity.PostValue.CREATE);
+                createDialogViews();
                 break;
             case R.id.action_settings:
                 newIntent(SettingsActivity.class);
@@ -82,6 +90,25 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void createDialogViews() {
+        MaterialDialog.Builder dialogB = new MaterialDialog.Builder(this);
+        dialogB.theme(Theme.DARK);
+        dialogB.title(R.string.select_view);
+        dialogB.adapter(new LayoutsViewAdapter(getApplicationContext(), bitmaps), new MaterialDialog.ListCallback() {
+            @Override
+            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                newIntent(PostActivity.class, PostActivity.PostValue.CREATE, which);
+                dialog.dismiss();
+            }
+        });
+        MaterialDialog dialog = dialogB.build();
+        dialog.setActionButton(DialogAction.NEGATIVE, R.string.close);
+
+        dialog.show();
+
+
     }
 
     @Override
@@ -105,7 +132,39 @@ public class MainActivity extends BaseActivity {
         }, 1);
     }
 
+    private class LoadLayoutsViewTask extends  AsyncTask<Void,Void, ArrayList<Bitmap>> {
+
+        @Override
+        protected ArrayList<Bitmap> doInBackground(Void... params) {
+            bitmaps = new ArrayList<>();
+
+            TypedArray ar = getResources().obtainTypedArray(R.array.view_arrays);
+            int len = ar.length();
+            int[] resIds = new int[len];
+            for (int i = 0; i < len; i++) {
+                resIds[i] = ar.getResourceId(i, 0);
+            }
+
+
+            for(int i = 0; i < resIds.length; i++) {
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), resIds[i]);
+                if(bmp != null) {
+                    bitmaps.add(bmp);
+                }
+            }
+            ar.recycle();
+            return bitmaps;
+        }
+    }
+
     private class LoadPostTask extends AsyncTask<Void, Void, ArrayList<BlogPost>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
         @Override
         protected ArrayList<BlogPost> doInBackground(Void... params) {
             ArrayList<BlogPost> postArrayList = null;
@@ -119,12 +178,14 @@ public class MainActivity extends BaseActivity {
             if(blogPostArrayList != null && blogPostArrayList.size() > 0) {
                 recyclerView.setVisibility(View.VISIBLE);
                 emptyImg.setVisibility(View.GONE);
-                mAdapter = new AdapterBlogList(blogPostArrayList);
+                mAdapter = new AdapterBlogList(MainActivity.this, blogPostArrayList);
                 recyclerView.setAdapter(mAdapter);
             } else {
                 emptyImg.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
             }
+            progressBar.setVisibility(View.GONE);
         }
     }
+
 }

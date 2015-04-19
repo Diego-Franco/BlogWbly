@@ -1,6 +1,8 @@
 package com.defch.blogwbly.activities;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -27,7 +29,8 @@ public class SettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_settings_activity);
         setupToolbar();
-        getFragmentManager().beginTransaction().add(R.id.container, SettingsFragment.createInstance()).commit();
+        getSupportFragmentManager().popBackStack(null, getFragmentManager().POP_BACK_STACK_INCLUSIVE);
+        getFragmentManager().beginTransaction().replace(R.id.container, SettingsFragment.createInstance()).commit();
         overridePendingTransition(R.anim.appear, R.anim.disappear);
     }
 
@@ -58,6 +61,13 @@ public class SettingsActivity extends BaseActivity {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.container);
         if (fragment != null) getFragmentManager().beginTransaction().remove(fragment).commit();
         super.recreate();
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void setStatusBarColor(int color) {
+        if (app.sdkVersion >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(color);
+        }
     }
 
 }
