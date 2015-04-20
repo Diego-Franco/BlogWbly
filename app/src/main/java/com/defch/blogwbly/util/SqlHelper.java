@@ -75,6 +75,7 @@ public class SqlHelper extends SQLiteOpenHelper {
         values.put(DBMethods.PublishC.COLUMN_PICTURE, bPost.getBitmapArray());
         values.put(DBMethods.PublishC.COLUMN_LATITUDE, bPost.getLatitude());
         values.put(DBMethods.PublishC.COLUMN_LONGITUDE, bPost.getLongitude());
+        values.put(DBMethods.PublishC.COLUMN_LAYOUT_ID, bPost.getLayoutId());
         db.insert(DBMethods.PublishC.TABLE_NAME, null, values);
     }
 
@@ -92,6 +93,7 @@ public class SqlHelper extends SQLiteOpenHelper {
         values.put(DBMethods.PublishC.COLUMN_PICTURE, bPost.getBitmapArray());
         values.put(DBMethods.PublishC.COLUMN_LATITUDE, bPost.getLatitude());
         values.put(DBMethods.PublishC.COLUMN_LONGITUDE, bPost.getLongitude());
+        values.put(DBMethods.PublishC.COLUMN_LAYOUT_ID, bPost.getLayoutId());
         db.update(DBMethods.PublishC.TABLE_NAME, values, null, null);
     }
     

@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -58,6 +59,7 @@ public class MainActivity extends BaseActivity {
         recyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setOnScrollListener(scrollListener);
         new LoadLayoutsViewTask().execute();
         new LoadPostTask().execute();
 
@@ -68,6 +70,26 @@ public class MainActivity extends BaseActivity {
         mToolBar.setBackgroundColor(getResources().getColor(app.getWTheme().primaryColor));
         setSupportActionBar(mToolBar);
     }
+
+    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            float y = recyclerView.getY();
+            if (y < dy ) {
+                mToolBar.animate()
+                        .translationY(-mToolBar.getBottom())
+                        .setInterpolator(new AccelerateInterpolator())
+                        .start();
+            } else {
+                mToolBar.animate()
+                        .translationY(0)
+                        .setInterpolator(new AccelerateInterpolator())
+                        .start();
+            }
+
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

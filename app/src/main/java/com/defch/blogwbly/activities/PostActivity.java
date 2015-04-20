@@ -4,33 +4,26 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.defch.blogwbly.R;
-import com.defch.blogwbly.adapters.AdapterPostPictures;
 import com.defch.blogwbly.fragments.FragmentContainer;
 import com.defch.blogwbly.ifaces.IfaceSnapMap;
+import com.defch.blogwbly.ifaces.PostInterfaces;
 import com.defch.blogwbly.model.BlogPost;
-import com.defch.blogwbly.ui.BlogPictureView;
 import com.defch.blogwbly.ui.FloatingButton;
 import com.defch.blogwbly.ui.ViewUtils;
-
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -38,8 +31,9 @@ import butterknife.OnClick;
 /**
  * Created by DiegoFranco on 4/17/15.
  */
-public class PostActivity extends BaseActivity implements View.OnClickListener, IfaceSnapMap{
+public class PostActivity extends BaseActivity implements View.OnClickListener, IfaceSnapMap, PostInterfaces {
 
+    private static final String FRAGMENT_TAG = "fragment_container";
     private static final String KEY_LAYOUT = "key_layout";
     private static final String POST_VALUE = "post_value";
     private static final String POST_OBJECT = "post_object";
@@ -47,8 +41,10 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     private static final int VIDEO_REQUEST = 1002;
     private static final int GALLERY_REQUEST = 1003;
 
+    @InjectView(R.id.mtoolbar_bottom)
+    Toolbar toolbarBottom;
     @InjectView(R.id.floatMenu)
-    View mUploadMenu;
+    View mFloatMenu;
     @InjectView(R.id.float_video_btn)
     FloatingButton videoButton;
     @InjectView(R.id.float_camera_btn)
@@ -64,16 +60,15 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     private float mUploadButtonHeight;
     private float mUploadMenuButtonHeight;
     private int mNavBarHeight = -1;
-    private boolean uploadMenuOpen = false;
-    private boolean uploadMenuShowing = false;
-
-    private AdapterPostPictures adapterPictures;
-    private ArrayList<BlogPictureView> pictures;
+    private boolean floatMenuOpen = false;
+    private boolean floatMenuShowing = false;
+    private boolean bottomToolbarShowing = false;
 
     private int viewIndex;
     private PostValue pValue;
-    //TODO save the viewLayoutId on db
     private BlogPost post;
+
+    private FragmentContainer fragmentContainer;
 
     public enum PostValue {
         VIEW, EDIT, CREATE
@@ -83,7 +78,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_post_activity);
-        pictures = new ArrayList<>();
         Resources res = getResources();
         int accentColor = res.getColor(theme.accentColor);
         addButton.setColor(accentColor);
@@ -96,8 +90,15 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
 
         pValue = (PostValue) getIntent().getSerializableExtra(POST_VALUE);
         viewIndex = getIntent().getIntExtra(KEY_LAYOUT, Integer.MIN_VALUE);
-        getFragmentManager().beginTransaction().replace(R.id.container_views, FragmentContainer.createInstance(viewIndex,pValue)).commit();
-
+        post = getIntent().getParcelableExtra(POST_OBJECT);
+        if(post != null) {
+            fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue, post);
+            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+        } else {
+            fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue);
+            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+        }
+        fragmentContainer.setPostInterfaces(this);
     }
 
     @OnClick({R.id.float_add_btn, R.id.float_video_btn, R.id.float_camera_btn, R.id.float_gallery_btn, R.id.float_map_btn})
@@ -105,39 +106,36 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.float_add_btn:
-                animateUploadMenu();
+                animateFloatingMenu();
                 break;
             case R.id.float_video_btn:
                     startActivityForResult(new Intent(MediaStore.ACTION_VIDEO_CAPTURE), VIDEO_REQUEST);
-                animateUploadMenu();
+                animateFloatingMenu();
                 break;
             case R.id.float_camera_btn:
                     startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), CAMERA_REQUEST);
-                animateUploadMenu();
+                animateFloatingMenu();
                 break;
             case R.id.float_gallery_btn:
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 i.setType("image/* video/*");
                 startActivityForResult(i, GALLERY_REQUEST);
-                animateUploadMenu();
+                animateFloatingMenu();
                 break;
             case R.id.float_map_btn:
                 app.setIfaceSnapMap(this);
                 newIntent(MapsActivity.class);
-                animateUploadMenu();
+                animateFloatingMenu();
                 break;
         }
     }
 
-    /**
-     * Animates the opening/closing of the Upload button
-     */
-    private void animateUploadMenu() {
+    private void animateFloatingMenu() {
         AnimatorSet set = new AnimatorSet().setDuration(500L);
         String translation = isLandscape() ? "translationX" : "translationY";
 
-        if (!uploadMenuOpen) {
-            uploadMenuOpen = true;
+        if (!floatMenuOpen) {
+            floatMenuOpen = true;
 
             set.playTogether(
                     ObjectAnimator.ofFloat(mapButton, translation, 0, (mUploadButtonHeight + 25) * -1),
@@ -167,7 +165,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
             set.setInterpolator(new OvershootInterpolator());
             set.start();
         } else {
-            uploadMenuOpen = false;
+            floatMenuOpen = false;
 
             set.playTogether(
                     ObjectAnimator.ofFloat(videoButton, translation, 0),
@@ -209,10 +207,10 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     //you can hide or show float button
-    private void animateUploadMenuButton(boolean shouldShow) {
-        if (!shouldShow && uploadMenuShowing) {
+    private void animateFloatingMenuButton(boolean shouldShow) {
+        if (!shouldShow && floatMenuShowing) {
             float hideDistance;
-            uploadMenuShowing = false;
+            floatMenuShowing = false;
             hideDistance = mUploadButtonHeight + (mUploadButtonHeight / 2);
             // Add extra distance to the hiding of the button if on KitKat due to the translucent nav bar
             if (app.sdkVersion >= Build.VERSION_CODES.KITKAT) {
@@ -221,111 +219,105 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                 hideDistance += mNavBarHeight;
             }
 
-            mUploadMenu.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(hideDistance).setDuration(350).start();
+            mFloatMenu.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(hideDistance).setDuration(350).start();
             // Close the menu if it is open
-            if (uploadMenuOpen) animateUploadMenu();
-        } else if (shouldShow && !uploadMenuShowing) {
-            uploadMenuShowing = true;
-            mUploadMenu.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(0).setDuration(350).start();
+            if (floatMenuOpen) animateFloatingMenu();
+        } else if (shouldShow && !floatMenuShowing) {
+            floatMenuShowing = true;
+            mFloatMenu.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(0).setDuration(350).start();
         }
     }
 
+    private void animateBottomToolbar() {
+        AnimatorSet set = new AnimatorSet().setDuration(500L);
+        if(bottomToolbarShowing) {
+            //hide toolbar
+            set.playTogether(
+                    ObjectAnimator.ofFloat(toolbarBottom, "scaleY", 1.0f, 0.0f),
+                    ObjectAnimator.ofFloat(addButton, "scaleY", 0.0f, 1.0f)
+            );
+
+            set.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationStart(animation);
+                    addButton.setVisibility(View.VISIBLE);
+                    toolbarBottom.setVisibility(View.GONE);
+                    animation.removeAllListeners();
+                }
+            });
+
+            set.setInterpolator(new OvershootInterpolator());
+            set.start();
+            bottomToolbarShowing = false;
+        } else {
+            //show toolbar
+            if (floatMenuOpen) animateFloatingMenu();
+            set.playTogether(
+                    ObjectAnimator.ofFloat(toolbarBottom, "scaleY", 0.0f, 1.0f),
+                    ObjectAnimator.ofFloat(addButton, "scaleY", 1.0f, 0.0f)
+            );
+
+            set.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
+                    addButton.setVisibility(View.GONE);
+                    toolbarBottom.setVisibility(View.VISIBLE);
+                    animation.removeAllListeners();
+                    inflateMenuOnBottomToolbar();
+                }
+            });
+            set.setInterpolator(new OvershootInterpolator());
+            set.start();
+            bottomToolbarShowing = true;
+        }
+
+    }
+
+    private void inflateMenuOnBottomToolbar() {
+        toolbarBottom = (Toolbar) findViewById(R.id.mtoolbar_bottom);
+        toolbarBottom.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    // TODO implement actions for bottom toolbar
+                    case R.id.action_divisor:
+                        break;
+                    case R.id.action_text:
+                        break;
+                    case R.id.action_align:
+                        break;
+                    case R.id.action_ok:
+                        break;
+                }
+                return true;
+            }
+        });
+        toolbarBottom.getMenu().clear();
+        toolbarBottom.inflateMenu(R.menu.menu_bottom_toolbar);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        BlogPictureView pictureView = new BlogPictureView(getApplicationContext());
-        Bitmap bmp;
-        if(data != null) {
-            switch (requestCode) {
-                case CAMERA_REQUEST:
-                    if (resultCode == RESULT_OK) {
-                        Bundle extras = data.getExtras();
-                        bmp = (Bitmap) extras.get("data");
-                        pictureView.setPicture(bmp);
-                        pictures.add(pictureView);
-                        setAdapter();
-                    }
-                    break;
-                case VIDEO_REQUEST:
-                    if (resultCode == RESULT_OK) {
-                        Uri videoUri = data.getData();
-                        pictureView.setVideo(videoUri);
-                        pictures.add(pictureView);
-                        setAdapter();
-                    }
-                    break;
-                case GALLERY_REQUEST:
-                    Uri selectedMediaUri = data.getData();
-                    if (selectedMediaUri.toString().contains("images")) {
-                        bmp = loadImage(selectedMediaUri);
-                        pictureView.setPicture(bmp);
-                    } else if (selectedMediaUri.toString().contains("video")) {
-                        pictureView.setVideo(selectedMediaUri);
-                    }
-                    pictures.add(pictureView);
-                    setAdapter();
-                    break;
-            }
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void setAdapter() {
-        if(pictures != null && pictures.size() > 0) {
-            if(adapterPictures == null) {
-                adapterPictures = new AdapterPostPictures(getApplicationContext(), pictures, pValue);
-                //mListView.setAdapter(adapterPictures);
-            } else {
-                adapterPictures.notifyDataSetChanged();
-            }
-        }
+        Fragment fragment = getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        fragment.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void takeSnapMap(Bitmap bitmap) {
-        BlogPictureView pictureView = new BlogPictureView(getApplicationContext());
-        pictureView.setPicture(bitmap);
-        pictures.add(pictureView);
-        setAdapter();
+        Fragment fragment = getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        ((FragmentContainer)fragment).setSnapMap(bitmap);
     }
 
-    public String getPath(Uri uri) {
-        if( uri == null ) {
-            return null;
+    @Override
+    public void clickTextToEdit(int id) {
+        switch (id) {
+            case R.id.post_textview_title:
+            case R.id.post_textview_text:
+                animateBottomToolbar();
+                break;
         }
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if( cursor != null ){
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        }
-        return uri.getPath();
     }
-
-    private Bitmap loadImage(Uri selectedImageUri) {
-        Bitmap bitmap = null;
-        if (Build.VERSION.SDK_INT < 19) {
-            String selectedImagePath = getPath(selectedImageUri);
-            bitmap = BitmapFactory.decodeFile(selectedImagePath);
-        } else {
-            ParcelFileDescriptor parcelFileDescriptor;
-            try {
-                parcelFileDescriptor = getContentResolver().openFileDescriptor(selectedImageUri, "r");
-                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                parcelFileDescriptor.close();
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return bitmap;
-    }
-
 
 }

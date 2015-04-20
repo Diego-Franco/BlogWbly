@@ -41,6 +41,13 @@ public class AdapterBlogList extends RecyclerView.Adapter<AdapterBlogList.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         BlogPost post = aPosts.get(position);
 
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)context).newIntent(PostActivity.class, PostActivity.PostValue.VIEW);
+            }
+        });
+
         holder.imageView.setImageBitmap(post.getThumbnail());
         holder.title.setText(post.getTitle());
         holder.subtitle.setText(post.getSubtitle());
@@ -64,11 +71,13 @@ public class AdapterBlogList extends RecyclerView.Adapter<AdapterBlogList.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        public View cardView;
         public ImageView imageView;
         public TextView title, subtitle;
         public Button editBtn, viewBtn;
         public ViewHolder(View v) {
              super(v);
+             cardView = (View)v.findViewById(R.id.card_view);
              imageView = (ImageView)v.findViewById(R.id.item_imageview);
              title = (TextView)v.findViewById(R.id.item_title);
              subtitle = (TextView)v.findViewById(R.id.item_subtitle);

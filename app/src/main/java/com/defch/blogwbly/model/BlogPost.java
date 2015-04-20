@@ -21,6 +21,7 @@ public class BlogPost implements Parcelable {
     private int longitude;
     private String title;
     private String subtitle;
+    private int layoutId;
 
     public BlogPost(Cursor cursor) {
         setId(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_ID));
@@ -30,6 +31,7 @@ public class BlogPost implements Parcelable {
         setThumbnail(convertByteArrayToBitmap(bArray));
         setLatitude(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_LATITUDE));
         setLongitude(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_LONGITUDE));
+        setLayoutId(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_LAYOUT_ID));
     }
 
     public int getId() {
@@ -78,6 +80,14 @@ public class BlogPost implements Parcelable {
 
     public void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
+    }
+
+    public int getLayoutId() {
+        return layoutId;
+    }
+
+    public void setLayoutId(int layoutId) {
+        this.layoutId = layoutId;
     }
 
     public boolean isMapView() {
