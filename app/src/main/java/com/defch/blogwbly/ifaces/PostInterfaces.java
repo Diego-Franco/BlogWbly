@@ -1,12 +1,15 @@
 package com.defch.blogwbly.ifaces;
 
+import android.widget.EditText;
+
 /**
  * Created by DiegoFranco on 4/19/15.
  */
 public interface PostInterfaces {
 
-    void clickTextToEdit(int id);
+    void clickTextToEdit(EditText editText);
 
-    void textSelected(String s);
+
+    void longClickedOnEditText(boolean clicked);
 
 }

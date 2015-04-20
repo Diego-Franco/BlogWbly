@@ -10,13 +10,14 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.activities.PostActivity;
@@ -26,9 +27,10 @@ import com.defch.blogwbly.ifaces.PostInterfaces;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.BlogPictureView;
 import com.defch.blogwbly.ui.ContainerLayout;
-import com.defch.blogwbly.ui.RichTextView;
 import com.defch.blogwbly.util.LogUtil;
 
+import org.lucasr.twowayview.TwoWayLayoutManager;
+import org.lucasr.twowayview.widget.GridLayoutManager;
 import org.lucasr.twowayview.widget.TwoWayView;
 
 import java.io.FileDescriptor;
@@ -59,9 +61,9 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     Toolbar mToolBar;
 
     @InjectView(R.id.post_textview_title)
-    TextView title;
+    EditText title;
     @InjectView(R.id.post_textview_text)
-    TextView content;
+    EditText content;
 
     @InjectView(R.id.list)
     TwoWayView pictureList;
@@ -85,8 +87,19 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         args.putInt(KEY_LAYOUT, keyLayout);
         args.putSerializable(POST_VALUE, postValue);
         fragmentContainer.setArguments(args);
-
         return fragmentContainer;
+    }
+
+    private void createScrollForList() {
+        switch (keyLayout) {
+            case 0:
+            case 1:
+            case 3:
+                ((GridLayoutManager)pictureList.getLayoutManager()).setNumColumns(adapterPictures.getItemCount());
+                ((GridLayoutManager)pictureList.getLayoutManager()).setNumRows(1);
+                ((GridLayoutManager)pictureList.getLayoutManager()).setOrientation(TwoWayLayoutManager.Orientation.HORIZONTAL);
+                break;
+        }
     }
 
     public static FragmentContainer createInstance(int keyLayout, PostActivity.PostValue postValue, BlogPost post) {
@@ -135,12 +148,23 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         super.onViewCreated(view, savedInstanceState);
         setupToolbar();
         ((PostActivity)getActivity()).setContainerIfaces(this);
+        title.setOnLongClickListener(longClickTextView);
+        content.setOnLongClickListener(longClickTextView);
         if(postValue == PostActivity.PostValue.VIEW) {
 
         } else if(postValue == PostActivity.PostValue.CREATE || postValue == PostActivity.PostValue.EDIT) {
 
         }
     }
+
+    View.OnLongClickListener longClickTextView = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            postInterfaces.longClickedOnEditText(true);
+            return true;
+        }
+    };
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -184,7 +208,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         switch (v.getId()) {
             case R.id.post_textview_title:
             case R.id.post_textview_text:
-                postInterfaces.clickTextToEdit(v.getId());
+                postInterfaces.clickTextToEdit((EditText)v);
                 break;
         }
     }
@@ -202,7 +226,15 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     }
 
     @Override
-    public void showTextWithRitchText(RichTextView richTextView) {
+    public void showTextWithRitchText(SpannableStringBuilder s, EditText editText) {
+        switch (editText.getId()) {
+            case R.id.post_textview_title:
+                title.setText(s);
+                break;
+            case R.id.post_textview_text:
+                content.setText(s);
+                break;
+        }
         //TODO get the richtText option and implment on the textview
     }
 
@@ -248,11 +280,12 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     private void setAdapter() {
         if(pictures != null && pictures.size() > 0) {
             if(adapterPictures == null) {
-                adapterPictures = new AdapterPostPictures(getActivity().getApplicationContext(), pictures, postValue);
-                //mListView.setAdapter(adapterPictures);
+                adapterPictures = new AdapterPostPictures(pictures, postValue);
+                pictureList.setAdapter(adapterPictures);
             } else {
                 adapterPictures.notifyDataSetChanged();
             }
+            createScrollForList();
         }
     }
 
@@ -299,4 +332,5 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         }
         return bitmap;
     }
+
 }

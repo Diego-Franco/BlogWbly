@@ -20,14 +20,13 @@
             android:layout_height="0dp"
             android:layout_weight="1.2">
 
-            <TextView
+            <EditText
                 android:id="@+id/post_textview_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textSize="24sp"
-                android:text="@string/title"
-                android:textIsSelectable="true"
-                style="@style/TextAppearance.AppCompat.Title"/>
+                android:hint="@string/title"
+                android:background="@null"/>
 
         </LinearLayout>
 
@@ -40,7 +39,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="6">
+                android:layout_weight="4">
 
                 <ScrollView
                     android:layout_width="match_parent"
@@ -52,14 +51,13 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <TextView
+                        <EditText
                             android:id="@+id/post_textview_text"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:textSize="18sp"
-                            android:text="@string/text"
-                            android:textIsSelectable="true"
-                            style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"/>
+                            android:hint="@string/text"
+                            android:background="@null"/>
 
                     </LinearLayout>
                 </ScrollView>
@@ -69,7 +67,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4">
+                android:layout_weight="6">
 
                 <org.lucasr.twowayview.widget.TwoWayView
                     android:id="@+id/list"

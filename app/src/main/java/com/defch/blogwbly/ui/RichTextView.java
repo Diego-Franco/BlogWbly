@@ -1,11 +1,9 @@
 package com.defch.blogwbly.ui;
 
 import android.graphics.Typeface;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
@@ -47,39 +45,35 @@ public class RichTextView {
 
     //RichTextView option = new RichTextView(TextTypeOption.BOLD);//for bold
 
-    public SpannableStringBuilder boldText(String s) {
-        SpannableStringBuilder span = new SpannableStringBuilder();
+    public SpannableStringBuilder getBoldText(String s, int start, int end) {
+        SpannableStringBuilder span = new SpannableStringBuilder(s);
         if(isBold()) {
-            span.setSpan(new StyleSpan(Typeface.BOLD), 0, s.length() ,  0);
+            span.setSpan(new StyleSpan(Typeface.BOLD), start, end,  0);
         }
         return span;
     }
 
-    public SpannableStringBuilder italicText(String s) {
-        SpannableStringBuilder span = new SpannableStringBuilder();
+    public SpannableStringBuilder getItalicText(String s, int start, int end) {
+        SpannableStringBuilder span = new SpannableStringBuilder(s);
         if(isItalic()) {
-            span.setSpan(new StyleSpan(Typeface.ITALIC), 0, s.length(), 0);;
+            span.setSpan(new StyleSpan(Typeface.ITALIC), start, end, 0);;
         }
         return span;
     }
 
-    public SpannableStringBuilder underlineText(String s) {
+    public SpannableStringBuilder getUnderlineText(String s, int start, int end) {
         SpannableStringBuilder span = new SpannableStringBuilder(s);
         if(isUnderline()) {
-            span.setSpan(new UnderlineSpan(), 0, s.length(), 0);
+            span.setSpan(new UnderlineSpan(), start, end, 0);
         }
         return span;
     }
 
-    public Spannable sizeText(String s, float size) {
+    public Spannable getSizeText(String s, float size, int start, int end) {
         Spannable span = new SpannableString(s);
         if(isSizeOption()) {
-            span.setSpan(new RelativeSizeSpan(size), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            span.setSpan(new RelativeSizeSpan(size), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         return span;
-    }
-
-    public Spanned getHtmlText(String s) {
-        return Html.fromHtml(s);
     }
 }

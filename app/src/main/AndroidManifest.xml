@@ -43,6 +43,7 @@
             android:label="@string/name_settings_activity" />
         <activity
             android:name=".activities.PostActivity"
+            android:theme="@style/AppTheme"
             android:label="@string/name_post_actvity"/>
         <activity
             android:name=".activities.MapsActivity"

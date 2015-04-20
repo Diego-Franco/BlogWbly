@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.EditText;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.defch.blogwbly.R;
@@ -25,6 +26,7 @@ import com.defch.blogwbly.ifaces.IfaceSnapMap;
 import com.defch.blogwbly.ifaces.PostInterfaces;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.FloatingButton;
+import com.defch.blogwbly.ui.RichTextView;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -34,6 +36,7 @@ import butterknife.OnClick;
  */
 public class PostActivity extends BaseActivity implements View.OnClickListener, IfaceSnapMap, PostInterfaces {
 
+    private static final String TAG = PostActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = "fragment_container";
     private static final String KEY_LAYOUT = "key_layout";
     private static final String POST_VALUE = "post_value";
@@ -60,17 +63,18 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     //float button values
     private float mUploadButtonHeight;
     private float mUploadMenuButtonHeight;
-    private int mNavBarHeight = -1;
     private boolean floatMenuOpen = false;
-    private boolean floatMenuShowing = false;
     private boolean bottomToolbarShowing = false;
 
-    private FContainerIfaces containerIfaces;
     private int viewIndex;
     private PostValue pValue;
     private BlogPost post;
 
+    private FContainerIfaces containerIfaces;
     private FragmentContainer fragmentContainer;
+    private EditText edtx;
+    private String textSelected;
+    private int startSelection, endSelection;
 
     public enum PostValue {
         VIEW, EDIT, CREATE
@@ -146,7 +150,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
             set.playTogether(
                     ObjectAnimator.ofFloat(mapButton, translation, 0, (mUploadButtonHeight + 25) * -1),
                     ObjectAnimator.ofFloat(videoButton, translation, 0, (mUploadMenuButtonHeight + mUploadButtonHeight + 50) * -1),
-                    ObjectAnimator.ofFloat(galleryButton, translation, 0, ((2 * mUploadMenuButtonHeight) + mUploadButtonHeight + 75)  * -1),
+                    ObjectAnimator.ofFloat(galleryButton, translation, 0, ((2 * mUploadMenuButtonHeight) + mUploadButtonHeight + 75) * -1),
                     ObjectAnimator.ofFloat(cameraButton, translation, 0, ((3 * mUploadMenuButtonHeight) + mUploadButtonHeight + 100) * -1),
 
                     ObjectAnimator.ofFloat(videoButton, "alpha", 0.0f, 1.0f),
@@ -212,30 +216,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-    //you can hide or show float button
-    //TODO probably don't use
-  /**  private void animateFloatingMenuButton(boolean shouldShow) {
-        if (!shouldShow && floatMenuShowing) {
-            float hideDistance;
-            floatMenuShowing = false;
-            hideDistance = mUploadButtonHeight + (mUploadButtonHeight / 2);
-            // Add extra distance to the hiding of the button if on KitKat due to the translucent nav bar
-            if (app.sdkVersion >= Build.VERSION_CODES.KITKAT) {
-                if (mNavBarHeight == -1)
-                    mNavBarHeight = ViewUtils.getNavigationBarHeight(getApplicationContext());
-                hideDistance += mNavBarHeight;
-            }
-
-            mFloatMenu.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(hideDistance).setDuration(350).start();
-            // Close the menu if it is open
-            if (floatMenuOpen) animateFloatingMenu();
-        } else if (shouldShow && !floatMenuShowing) {
-            floatMenuShowing = true;
-            mFloatMenu.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(0).setDuration(350).start();
-        }
-    }*/
-
-    private void animateBottomToolbar() {
+    public void animateBottomToolbar() {
         AnimatorSet set = new AnimatorSet().setDuration(500L);
         if(bottomToolbarShowing) {
             //hide toolbar
@@ -283,22 +264,31 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void inflateMenuOnBottomToolbar() {
-        //toolbarBottom = (Toolbar) findViewById(R.id.mtoolbar_bottom);
         toolbarBottom.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     // TODO implement actions for bottom toolbar
                     case R.id.action_bold:
+                        RichTextView boldText = new RichTextView(RichTextView.BOLD);
+                        containerIfaces.showTextWithRitchText(boldText.getBoldText(textSelected, startSelection, endSelection), edtx);
+                        animateBottomToolbar();
                         break;
                     case R.id.action_italic:
+                        RichTextView italicText = new RichTextView(RichTextView.ITALIC);
+                        containerIfaces.showTextWithRitchText(italicText.getItalicText(textSelected, startSelection, endSelection), edtx);
+                        animateBottomToolbar();
                         break;
                     case R.id.action_underline:
+                        RichTextView underLineText = new RichTextView(RichTextView.UNDERLINE);
+                        containerIfaces.showTextWithRitchText(underLineText.getUnderlineText(textSelected, startSelection, endSelection), edtx);
+                        animateBottomToolbar();
                         break;
                     case R.id.action_size:
+                        RichTextView sizeText = new RichTextView(RichTextView.SIZE);
+                        animateBottomToolbar();
                         break;
                     case R.id.action_ok:
-                        //TODO apply changes method
                         animateBottomToolbar();
                         break;
                 }
@@ -307,6 +297,12 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         });
         toolbarBottom.getMenu().clear();
         toolbarBottom.inflateMenu(R.menu.menu_bottom_toolbar);
+    }
+
+    private void getValues() {
+        startSelection = edtx.getText().toString().length() - edtx.getText().toString().length();
+        endSelection = edtx.getText().toString().length();
+        textSelected = edtx.getText().toString().substring(startSelection, endSelection);
     }
 
     @Override
@@ -322,32 +318,58 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void clickTextToEdit(int id) {
-        switch (id) {
+    public void clickTextToEdit(EditText editText) {
+        switch (editText.getId()) {
             case R.id.post_textview_title:
             case R.id.post_textview_text:
-                showEditText(id);
+                showEditText(editText);
+                edtx = editText;
                 break;
         }
     }
 
     @Override
-    public void textSelected(String s) {
-        //TODO get the selected text from fragment
+    public void longClickedOnEditText(boolean clicked) {
+        if(clicked) {
+            animateBottomToolbar();
+        }
     }
 
-    public void showEditText(final int id) {
-        new MaterialDialog.Builder(this)
-                .title(R.string.input)
-                .content(R.string.input_content)
-                .inputType(InputType.TYPE_CLASS_TEXT)
-                .input(R.string.input_hint, R.string.null_text, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(MaterialDialog dialog, CharSequence input) {
-                        containerIfaces.receiveText(input.toString(), id);
-                        // Do something
-                    }
-                }).show();
+    public void showEditText(final EditText editText) {
+        if(editText.getText().toString() != null && editText.getText().toString().length() > 0) {
+            new MaterialDialog.Builder(this)
+                    .title(R.string.input)
+                    .content(R.string.input_content)
+                    .inputType(InputType.TYPE_CLASS_TEXT)
+                    .input("", editText.getText().toString(), new MaterialDialog.InputCallback() {
+                        @Override
+                        public void onInput(MaterialDialog dialog, CharSequence input) {
+                            if (input != null && input.length() > 0) {
+                                animateBottomToolbar();
+                                containerIfaces.receiveText(input.toString(), editText.getId());
+                                getValues();
+                            }
+                        }
+                    }).show();
+        } else {
+            new MaterialDialog.Builder(this)
+                    .title(R.string.input)
+                    .content(R.string.input_content)
+                    .inputType(InputType.TYPE_CLASS_TEXT)
+                    .input(R.string.input_hint, R.string.null_text, new MaterialDialog.InputCallback() {
+                        @Override
+                        public void onInput(MaterialDialog dialog, CharSequence input) {
+                            if (input != null && input.length() > 0) {
+                                animateBottomToolbar();
+                                containerIfaces.receiveText(input.toString(), editText.getId());
+                                getValues();
+                            }
+                        }
+                    }).show();
+        }
+
     }
+
+
 
 }

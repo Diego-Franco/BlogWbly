@@ -20,21 +20,20 @@
             android:layout_height="0dp"
             android:layout_weight="1.2">
 
-            <TextView
+            <EditText
                 android:id="@+id/post_textview_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textSize="24sp"
-                android:text="@string/title"
-                android:textIsSelectable="true"
-                style="@style/TextAppearance.AppCompat.Title"/>
+                android:hint="@string/title"
+                android:background="@null"/>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4.3">
+            android:layout_weight="3">
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -46,15 +45,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <EditText
                     android:id="@+id/post_textview_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textSize="18sp"
-                    android:text="@string/text"
-                    android:textIsSelectable="true"
-                    style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"/>
-
+                    android:hint="@string/text"
+                    android:background="@null"/>
                 </LinearLayout>
             </ScrollView>
 
@@ -63,13 +60,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4.5">
+            android:layout_weight="5.8">
 
             <org.lucasr.twowayview.widget.TwoWayView
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:twowayview_layoutManager="ListLayoutManager"/>
+                app:twowayview_layoutManager="GridLayoutManager"
+                app:twowayview_numRows="1">
+
+                <requestFocus />
+
+                </org.lucasr.twowayview.widget.TwoWayView>
 
         </LinearLayout>
 

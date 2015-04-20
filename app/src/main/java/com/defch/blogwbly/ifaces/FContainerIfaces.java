@@ -1,6 +1,7 @@
 package com.defch.blogwbly.ifaces;
 
-import com.defch.blogwbly.ui.RichTextView;
+import android.text.SpannableStringBuilder;
+import android.widget.EditText;
 
 /**
  * Created by DiegoFranco on 4/20/15.
@@ -9,6 +10,7 @@ public interface FContainerIfaces {
 
     void receiveText(String string, int id);
 
-    void showTextWithRitchText(RichTextView richTextView);
+    void showTextWithRitchText(SpannableStringBuilder string, EditText editText);
+
 
 }
