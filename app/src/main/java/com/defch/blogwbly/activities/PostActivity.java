@@ -282,13 +282,11 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     // TODO implement actions for bottom toolbar
-                    case R.id.action_divisor:
-                        break;
                     case R.id.action_text:
                         break;
-                    case R.id.action_align:
-                        break;
                     case R.id.action_ok:
+                        //TODO apply changes method
+                        animateBottomToolbar();
                         break;
                 }
                 return true;

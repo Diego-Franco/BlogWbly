@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/container_widget_post_blog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/card_picture"

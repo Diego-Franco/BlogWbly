@@ -39,6 +39,7 @@ public class AdapterPostPictures extends ArrayAdapter<BlogPictureView> {
         if(v == null) {
             v = LayoutInflater.from(this.getContext()).inflate(R.layout.widget_post_blog, parent, false);
             holder = new ViewHolder();
+            holder.containerView = v.findViewById(R.id.container_widget_post_blog);
             holder.imageView = (ImageView)v.findViewById(R.id.widget_img);
             holder.videoView = (VideoView)v.findViewById(R.id.widget_video);
             holder.bntClose = (ImageView)v.findViewById(R.id.widget_close_btn);
@@ -66,11 +67,43 @@ public class AdapterPostPictures extends ArrayAdapter<BlogPictureView> {
                     }
                 });
             }
+
+            holder.containerView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //TODO implement dialog for edit the file
+                    /**
+                     *  MaterialDialog.Builder dialog = new MaterialDialog.Builder(context);
+                     dialog.title(R.string.delete_view);
+                     dialog.callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                    super.onPositive(dialog);
+                    aPosts.remove(position);
+                    notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                    super.onNegative(dialog);
+                    dialog.dismiss();
+                    }
+                    });
+                     MaterialDialog d = dialog.build();
+                     d.setActionButton(DialogAction.POSITIVE, android.R.string.ok);
+                     d.setActionButton(DialogAction.NEGATIVE, android.R.string.no);
+
+                     dialog.show();
+                     */
+                    return true;
+                }
+            });
         }
         return v;
     }
 
     private static class ViewHolder {
+        View containerView;
         ImageView imageView;
         VideoView videoView;
         ImageView bntClose;

@@ -3,23 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_divisor"
-        android:title="@string/action_divisor"
-        android:icon="@mipmap/ic_action_line"
-        android:orderInCategory="100"
-        app:showAsAction="always"/>
-
-    <item
         android:id="@+id/action_text"
         android:icon="@mipmap/ic_action_txt"
         android:title="@string/action_text"
-        android:orderInCategory="200"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_align"
-        android:title="@string/action_align"
-        android:icon="@mipmap/ic_action_align"
-        android:orderInCategory="300"
+        android:orderInCategory="100"
         app:showAsAction="always"/>
 
     <item

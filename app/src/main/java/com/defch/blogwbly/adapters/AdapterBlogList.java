@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.activities.MainActivity;
 import com.defch.blogwbly.activities.PostActivity;
@@ -38,13 +40,34 @@ public class AdapterBlogList extends RecyclerView.Adapter<AdapterBlogList.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         BlogPost post = aPosts.get(position);
 
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                ((MainActivity)context).newIntent(PostActivity.class, PostActivity.PostValue.VIEW);
+            public boolean onLongClick(View v) {
+                MaterialDialog.Builder dialog = new MaterialDialog.Builder(context);
+                dialog.title(R.string.delete_view);
+                dialog.callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        aPosts.remove(position);
+                        notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        super.onNegative(dialog);
+                        dialog.dismiss();
+                    }
+                });
+                MaterialDialog d = dialog.build();
+                d.setActionButton(DialogAction.POSITIVE, android.R.string.ok);
+                d.setActionButton(DialogAction.NEGATIVE, android.R.string.no);
+
+                dialog.show();
+                return true;
             }
         });
 
@@ -77,7 +100,7 @@ public class AdapterBlogList extends RecyclerView.Adapter<AdapterBlogList.ViewHo
         public Button editBtn, viewBtn;
         public ViewHolder(View v) {
              super(v);
-             cardView = (View)v.findViewById(R.id.card_view);
+             cardView = v.findViewById(R.id.card_view);
              imageView = (ImageView)v.findViewById(R.id.item_imageview);
              title = (TextView)v.findViewById(R.id.item_title);
              subtitle = (TextView)v.findViewById(R.id.item_subtitle);

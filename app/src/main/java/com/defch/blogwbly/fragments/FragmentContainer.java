@@ -40,6 +40,8 @@ import butterknife.OnClick;
 /**
  * Created by DiegoFranco on 4/18/15.
  */
+
+//TODO implement new blank view for drag and drop
 public class FragmentContainer extends FragmentContainerBase implements View.OnClickListener{
 
     private static final String TAG = FragmentContainer.class.getSimpleName();
