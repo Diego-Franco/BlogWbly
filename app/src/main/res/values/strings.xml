@@ -25,7 +25,10 @@
     <string name="close">Close</string>
     <string name="select_view">Select View</string>
     <string name="delete_view">Do you want delete?</string>
-
+    <string name="input">Enter Text</string>
+    <string name="input_content">Enter your text here:</string>
+    <string name="input_hint">Some text</string>
+    <string name="null_text"></string>
 
 
     <!-- preferences-->

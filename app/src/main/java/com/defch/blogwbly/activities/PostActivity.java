@@ -12,13 +12,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.fragments.FragmentContainer;
+import com.defch.blogwbly.ifaces.FContainerIfaces;
 import com.defch.blogwbly.ifaces.IfaceSnapMap;
 import com.defch.blogwbly.ifaces.PostInterfaces;
 import com.defch.blogwbly.model.BlogPost;
@@ -64,6 +67,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     private boolean floatMenuShowing = false;
     private boolean bottomToolbarShowing = false;
 
+    private FContainerIfaces containerIfaces;
     private int viewIndex;
     private PostValue pValue;
     private BlogPost post;
@@ -99,6 +103,10 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
             getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
         }
         fragmentContainer.setPostInterfaces(this);
+    }
+
+    public void setContainerIfaces(FContainerIfaces ifaces) {
+        this.containerIfaces = ifaces;
     }
 
     @OnClick({R.id.float_add_btn, R.id.float_video_btn, R.id.float_camera_btn, R.id.float_gallery_btn, R.id.float_map_btn})
@@ -276,13 +284,19 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void inflateMenuOnBottomToolbar() {
-        toolbarBottom = (Toolbar) findViewById(R.id.mtoolbar_bottom);
+        //toolbarBottom = (Toolbar) findViewById(R.id.mtoolbar_bottom);
         toolbarBottom.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     // TODO implement actions for bottom toolbar
-                    case R.id.action_text:
+                    case R.id.action_bold:
+                        break;
+                    case R.id.action_italic:
+                        break;
+                    case R.id.action_underline:
+                        break;
+                    case R.id.action_size:
                         break;
                     case R.id.action_ok:
                         //TODO apply changes method
@@ -313,9 +327,28 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         switch (id) {
             case R.id.post_textview_title:
             case R.id.post_textview_text:
-                animateBottomToolbar();
+                showEditText(id);
                 break;
         }
+    }
+
+    @Override
+    public void textSelected(String s) {
+        //TODO get the selected text from fragment
+    }
+
+    public void showEditText(final int id) {
+        new MaterialDialog.Builder(this)
+                .title(R.string.input)
+                .content(R.string.input_content)
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input(R.string.input_hint, R.string.null_text, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        containerIfaces.receiveText(input.toString(), id);
+                        // Do something
+                    }
+                }).show();
     }
 
 }

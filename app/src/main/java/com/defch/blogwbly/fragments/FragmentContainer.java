@@ -21,10 +21,12 @@ import android.widget.TextView;
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.activities.PostActivity;
 import com.defch.blogwbly.adapters.AdapterPostPictures;
+import com.defch.blogwbly.ifaces.FContainerIfaces;
 import com.defch.blogwbly.ifaces.PostInterfaces;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.BlogPictureView;
 import com.defch.blogwbly.ui.ContainerLayout;
+import com.defch.blogwbly.ui.RichTextView;
 import com.defch.blogwbly.util.LogUtil;
 
 import org.lucasr.twowayview.widget.TwoWayView;
@@ -42,7 +44,7 @@ import butterknife.OnClick;
  */
 
 //TODO implement new blank view for drag and drop
-public class FragmentContainer extends FragmentContainerBase implements View.OnClickListener{
+public class FragmentContainer extends FragmentContainerBase implements View.OnClickListener, FContainerIfaces{
 
     private static final String TAG = FragmentContainer.class.getSimpleName();
 
@@ -132,6 +134,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupToolbar();
+        ((PostActivity)getActivity()).setContainerIfaces(this);
         if(postValue == PostActivity.PostValue.VIEW) {
 
         } else if(postValue == PostActivity.PostValue.CREATE || postValue == PostActivity.PostValue.EDIT) {
@@ -184,6 +187,23 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
                 postInterfaces.clickTextToEdit(v.getId());
                 break;
         }
+    }
+
+    @Override
+    public void receiveText(String string, int id) {
+        switch (id) {
+            case R.id.post_textview_title:
+                title.setText(string);
+                break;
+            case R.id.post_textview_text:
+                content.setText(string);
+                break;
+        }
+    }
+
+    @Override
+    public void showTextWithRitchText(RichTextView richTextView) {
+        //TODO get the richtText option and implment on the textview
     }
 
     @Override

@@ -7,4 +7,6 @@ public interface PostInterfaces {
 
     void clickTextToEdit(int id);
 
+    void textSelected(String s);
+
 }

@@ -3,17 +3,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_text"
-        android:icon="@mipmap/ic_action_txt"
+        android:id="@+id/action_bold"
+        android:icon="@mipmap/ic_action_bold"
         android:title="@string/action_text"
         android:orderInCategory="100"
         app:showAsAction="always"/>
 
     <item
+        android:id="@+id/action_italic"
+        android:icon="@mipmap/ic_action_italic"
+        android:title="@string/action_text"
+        android:orderInCategory="200"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_underline"
+        android:icon="@mipmap/ic_action_underline"
+        android:title="@string/action_text"
+        android:orderInCategory="300"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_size"
+        android:icon="@mipmap/ic_action_size"
+        android:title="@string/action_text"
+        android:orderInCategory="400"
+        app:showAsAction="always"/>
+
+
+    <item
         android:id="@+id/action_ok"
         android:title="@android:string/ok"
-        android:icon="@android:drawable/ic_menu_view"
-        android:orderInCategory="400"
+        android:icon="@mipmap/ic_action_set"
+        android:orderInCategory="500"
         app:showAsAction="always"/>
 
 </menu>
