@@ -8,7 +8,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
@@ -26,7 +25,6 @@ import com.defch.blogwbly.ifaces.IfaceSnapMap;
 import com.defch.blogwbly.ifaces.PostInterfaces;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.FloatingButton;
-import com.defch.blogwbly.ui.ViewUtils;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -126,7 +124,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.float_gallery_btn:
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                i.setType("image/* video/*");
+                i.setType("*/*");
                 startActivityForResult(i, GALLERY_REQUEST);
                 animateFloatingMenu();
                 break;
@@ -215,7 +213,8 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     //you can hide or show float button
-    private void animateFloatingMenuButton(boolean shouldShow) {
+    //TODO probably don't use
+  /**  private void animateFloatingMenuButton(boolean shouldShow) {
         if (!shouldShow && floatMenuShowing) {
             float hideDistance;
             floatMenuShowing = false;
@@ -234,7 +233,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
             floatMenuShowing = true;
             mFloatMenu.animate().setInterpolator(new AccelerateDecelerateInterpolator()).translationY(0).setDuration(350).start();
         }
-    }
+    }*/
 
     private void animateBottomToolbar() {
         AnimatorSet set = new AnimatorSet().setDuration(500L);

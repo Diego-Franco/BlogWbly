@@ -39,6 +39,7 @@
                 android:layout_height="match_parent"
                 android:textSize="24sp"
                 android:text="@string/title"
+                android:textIsSelectable="true"
                 style="@style/TextAppearance.AppCompat.Title"/>
 
         </LinearLayout>
@@ -64,6 +65,7 @@
                         android:layout_height="match_parent"
                         android:textSize="18sp"
                         android:text="@string/text"
+                        android:textIsSelectable="true"
                         style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"/>
 
                 </LinearLayout>
