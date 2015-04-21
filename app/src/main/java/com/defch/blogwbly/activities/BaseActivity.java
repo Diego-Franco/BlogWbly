@@ -53,12 +53,6 @@ public class BaseActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public void newIntent(Class clazz, PostActivity.PostValue postValue) {
-        Intent intent = new Intent(this, clazz);
-        intent.putExtra(POST_VALUE, postValue);
-        startActivity(intent);
-    }
-
     public void newIntent(Class clazz, PostActivity.PostValue postValue, int position) {
         Intent intent = new Intent(this, clazz);
         intent.putExtra(POST_VALUE, postValue);

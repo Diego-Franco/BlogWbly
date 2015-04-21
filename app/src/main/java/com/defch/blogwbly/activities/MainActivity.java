@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import butterknife.InjectView;
 import butterknife.Optional;
 
-
 public class MainActivity extends BaseActivity {
 
     @Optional

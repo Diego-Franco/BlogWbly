@@ -27,7 +27,7 @@
         android:id="@+id/action_ok"
         android:title="@android:string/ok"
         android:icon="@mipmap/ic_action_set"
-        android:orderInCategory="500"
+        android:orderInCategory="400"
         app:showAsAction="always"/>
 
 </menu>

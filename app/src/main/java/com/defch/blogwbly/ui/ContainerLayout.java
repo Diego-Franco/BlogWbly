@@ -10,7 +10,8 @@ public enum ContainerLayout {
     CONTAINER2(1, R.layout.container_2),
     CONTAINER3(2, R.layout.container_3),
     CONTAINER4(3, R.layout.container_4),
-    CONTAINER5(4, R.layout.container_5);
+    CONTAINER5(4, R.layout.container_5),
+    CONTAINER6(5, R.layout.container_6);
 
     public final int key;
     public final int layoutId;
@@ -37,6 +38,9 @@ public enum ContainerLayout {
                 break;
             case 4:
                 containerL = CONTAINER5;
+                break;
+            case 5:
+                containerL = CONTAINER6;
                 break;
         }
         return containerL;

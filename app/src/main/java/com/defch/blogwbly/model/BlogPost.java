@@ -2,13 +2,10 @@ package com.defch.blogwbly.model;
 
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.defch.blogwbly.util.DBMethods;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * Created by DiegoFranco on 4/17/15.
@@ -22,8 +19,6 @@ public class BlogPost implements Parcelable {
     private String title;
     private String subtitle;
     private int layoutId;
-
-    private byte[] bitmapArray;
 
     public BlogPost() { }
 
@@ -50,7 +45,6 @@ public class BlogPost implements Parcelable {
 
     public void setThumbnail(Bitmap thumbnail) {
         this.thumbnail = thumbnail;
-        convertBitmapToArray();
     }
 
     public double getLatitude() {
@@ -101,28 +95,14 @@ public class BlogPost implements Parcelable {
         }
     }
 
-    public byte[] getBitmapArray() {
-        return bitmapArray;
-    }
-
-    private void convertBitmapToArray() {
-        if(thumbnail != null) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            thumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            bitmapArray = stream.toByteArray();
-        }
-    }
-
-    private Bitmap convertByteArrayToBitmap(byte[] bitmapdata) {
-       return BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-    }
-
     protected BlogPost(Parcel in) {
+        id = in.readInt();
         thumbnail = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
-        latitude = in.readInt();
-        longitude = in.readInt();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
         title = in.readString();
         subtitle = in.readString();
+        layoutId = in.readInt();
     }
 
     @Override
@@ -132,12 +112,15 @@ public class BlogPost implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeValue(thumbnail);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
         dest.writeString(title);
         dest.writeString(subtitle);
+        dest.writeInt(layoutId);
     }
+
 
     @SuppressWarnings("unused")
     public static final Parcelable.Creator<BlogPost> CREATOR = new Parcelable.Creator<BlogPost>() {

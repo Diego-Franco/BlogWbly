@@ -91,7 +91,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         post = getIntent().getParcelableExtra(POST_OBJECT);
         if(post != null) {
             viewIndex = post.getLayoutId();
-            fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue, post);
+            fragmentContainer = FragmentContainer.createInstance(viewIndex, PostValue.VIEW, post);
             getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
         } else {
             fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue);
@@ -324,14 +324,19 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.post_textview_text:
                 showEditText(editText);
                 edtx = editText;
+
                 break;
         }
     }
 
     @Override
-    public void longClickedOnEditText(boolean clicked) {
+    public void longClickedOnEditText(boolean clicked, EditText editText) {
         if(clicked) {
             animateBottomToolbar();
+            if(post != null && editText != null) {
+                edtx = editText;
+                getValues();
+            }
         }
     }
 

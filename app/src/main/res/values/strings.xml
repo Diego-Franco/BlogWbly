@@ -9,9 +9,10 @@
     <string name="action_save">Save</string>
     <string name="action_edit">Edit</string>
     <string name="action_location">Snapshot</string>
-    <string name="action_divisor">Division Line</string>
     <string name="action_text">Text Format</string>
-    <string name="action_align">Text Align</string>
+    <string name="action_add_title">Add Title</string>
+    <string name="action_add_content">Add Content</string>
+    <string name="action_add_images">Add Images</string>
 
     <!-- app -->
     <string name="name_settings_activity">Settings</string>

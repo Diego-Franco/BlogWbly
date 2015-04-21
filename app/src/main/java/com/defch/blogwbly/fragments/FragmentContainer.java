@@ -153,6 +153,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         content.setFocusable(false);
         title.setOnLongClickListener(longClickTextView);
         content.setOnLongClickListener(longClickTextView);
+
         if(postValue == PostActivity.PostValue.VIEW) {
             if(bPost.getThumbnail() != null) {
                 pictures = new ArrayList<>();
@@ -169,15 +170,17 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
             title.setText(bPost.getTitle());
             content.setText(bPost.getSubtitle());
 
-        } else if(postValue == PostActivity.PostValue.CREATE || postValue == PostActivity.PostValue.EDIT) {
-
         }
     }
 
     View.OnLongClickListener longClickTextView = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            postInterfaces.longClickedOnEditText(true);
+            if(bPost != null) {
+                postInterfaces.longClickedOnEditText(true, (EditText) v);
+            } else {
+                postInterfaces.longClickedOnEditText(true, null);
+            }
             return true;
         }
     };

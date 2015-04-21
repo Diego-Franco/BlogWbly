@@ -7,6 +7,7 @@
         <item>@mipmap/ic_container3</item>
         <item>@mipmap/ic_container4</item>
         <item>@mipmap/ic_container5</item>
+        <item>@mipmap/ic_container6</item>
     </array>
 
     <string-array name="pref_theme_keys" translatable="false">

@@ -10,6 +10,6 @@ public interface PostInterfaces {
     void clickTextToEdit(EditText editText);
 
 
-    void longClickedOnEditText(boolean clicked);
+    void longClickedOnEditText(boolean clicked, EditText editText);
 
 }
