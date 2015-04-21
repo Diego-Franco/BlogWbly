@@ -24,7 +24,8 @@ public class AdapterPostPictures extends RecyclerView.Adapter<AdapterPostPicture
     private PostActivity.PostValue pValue;
 
 
-    public AdapterPostPictures(ArrayList<BlogPictureView> objects, PostActivity.PostValue postValue) {
+    public AdapterPostPictures(Context context, ArrayList<BlogPictureView> objects, PostActivity.PostValue postValue) {
+        this.context = context;
         this.pictures = objects;
         this.pValue = postValue;
     }
@@ -44,6 +45,14 @@ public class AdapterPostPictures extends RecyclerView.Adapter<AdapterPostPicture
                 holder.videoView.setVisibility(View.GONE);
                 holder.imageView.setVisibility(View.VISIBLE);
                 holder.imageView.setImageBitmap(pictureView.getPicture());
+                if(pictureView.isMapPicture()) {
+                    holder.imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                }
             } else if (pictureView.getVideo() != null) {
                 holder.imageView.setVisibility(View.GONE);
                 holder.videoView.setVisibility(View.VISIBLE);
@@ -60,35 +69,6 @@ public class AdapterPostPictures extends RecyclerView.Adapter<AdapterPostPicture
                     }
                 });
             }
-
-            holder.containerView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    //TODO implement dialog for edit the file
-                    /**
-                     *  MaterialDialog.Builder dialog = new MaterialDialog.Builder(context);
-                     dialog.title(R.string.delete_view);
-                     dialog.callback(new MaterialDialog.ButtonCallback() {
-                    @Override public void onPositive(MaterialDialog dialog) {
-                    super.onPositive(dialog);
-                    aPosts.remove(position);
-                    notifyDataSetChanged();
-                    }
-
-                    @Override public void onNegative(MaterialDialog dialog) {
-                    super.onNegative(dialog);
-                    dialog.dismiss();
-                    }
-                    });
-                     MaterialDialog d = dialog.build();
-                     d.setActionButton(DialogAction.POSITIVE, android.R.string.ok);
-                     d.setActionButton(DialogAction.NEGATIVE, android.R.string.no);
-
-                     dialog.show();
-                     */
-                    return true;
-                }
-            });
         }
     }
 

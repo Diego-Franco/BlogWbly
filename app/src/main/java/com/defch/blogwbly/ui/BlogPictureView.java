@@ -12,6 +12,8 @@ public class BlogPictureView extends RelativeLayout {
 
     private Bitmap bmp;
     private Uri uri;
+    private double latitude, longitude;
+    private boolean isMapPicture;
 
     public BlogPictureView(Context context) {
         super(context);
@@ -33,4 +35,27 @@ public class BlogPictureView extends RelativeLayout {
         this.uri = uri;
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public boolean isMapPicture() {
+        return isMapPicture;
+    }
+
+    public void setIsMapPicture(boolean isMapPicture) {
+        this.isMapPicture = isMapPicture;
+    }
 }

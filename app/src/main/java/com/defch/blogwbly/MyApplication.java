@@ -4,18 +4,26 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.defch.blogwbly.activities.SettingsActivity;
 import com.defch.blogwbly.ifaces.IfaceSnapMap;
+import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.WeeblyThemes;
 import com.defch.blogwbly.util.SqlHelper;
+
+import java.util.ArrayList;
 
 /**
  * Created by DiegoFranco on 4/14/15.
  */
+//TODO create a folder for the images on the posts
+    //TODO create the test classes for the application
+    //TODO pending pagination with infinite scrolling
+    //TODO create the layout for tablets
 public class MyApplication extends Application {
 
     private static MyApplication instance;
@@ -28,6 +36,8 @@ public class MyApplication extends Application {
 
     public int sdkVersion = Build.VERSION.SDK_INT;
     private WeeblyThemes theme = WeeblyThemes.WEEBLY;
+
+    private ArrayList<BlogPost> posts = new ArrayList<>();
 
     public static MyApplication getInstance() {
         return instance;
@@ -48,6 +58,7 @@ public class MyApplication extends Application {
         mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         theme = WeeblyThemes.getThemeFromString(mPref.getString(SettingsActivity.THEME_KEY, "weebly"));
         theme.isDarkTheme = mPref.getBoolean(SettingsActivity.KEY_DARK_THEME, false);
+        new LoadPostTask().execute();
     }
 
     public WeeblyThemes getWTheme() {
@@ -72,6 +83,26 @@ public class MyApplication extends Application {
 
     public void setIfaceSnapMap(IfaceSnapMap ifaceSnapMap) {
         this.ifaceSnapMap = ifaceSnapMap;
+    }
+
+    public void savePostOnDB(BlogPost post) {
+        sqlHelper.insertPost(post);
+    }
+
+    public void updatePostOnDB(BlogPost post) {
+        sqlHelper.updatePost(post);
+    }
+
+    public void deletePostOnDB(int postId) {
+        sqlHelper.deletePost(postId);
+    }
+
+    public ArrayList<BlogPost> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(ArrayList<BlogPost> posts) {
+        this.posts = posts;
     }
 
     /**
@@ -100,5 +131,14 @@ public class MyApplication extends Application {
     @Override
     public void onLowMemory() {
         super.onLowMemory();
+    }
+
+    private class LoadPostTask extends AsyncTask<Void, Void, ArrayList<BlogPost>> {
+
+        @Override
+        protected ArrayList<BlogPost> doInBackground(Void... params) {
+            posts = sqlHelper.getPosts();
+            return posts;
+        }
     }
 }

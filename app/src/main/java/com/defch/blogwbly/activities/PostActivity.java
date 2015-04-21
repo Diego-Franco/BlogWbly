@@ -84,6 +84,23 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_post_activity);
+        loagFloatingButton();
+
+        pValue = (PostValue) getIntent().getSerializableExtra(POST_VALUE);
+        viewIndex = getIntent().getIntExtra(KEY_LAYOUT, Integer.MIN_VALUE);
+        post = getIntent().getParcelableExtra(POST_OBJECT);
+        if(post != null) {
+            viewIndex = post.getLayoutId();
+            fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue, post);
+            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+        } else {
+            fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue);
+            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+        }
+        fragmentContainer.setPostInterfaces(this);
+    }
+
+    private void loagFloatingButton() {
         Resources res = getResources();
         int accentColor = res.getColor(theme.accentColor);
         addButton.setColor(accentColor);
@@ -93,18 +110,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         mapButton.setColor(accentColor);
         mUploadButtonHeight = getResources().getDimension(R.dimen.f_button_radius);
         mUploadMenuButtonHeight = getResources().getDimension(R.dimen.f_button_radius_smaller);
-
-        pValue = (PostValue) getIntent().getSerializableExtra(POST_VALUE);
-        viewIndex = getIntent().getIntExtra(KEY_LAYOUT, Integer.MIN_VALUE);
-        post = getIntent().getParcelableExtra(POST_OBJECT);
-        if(post != null) {
-            fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue, post);
-            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
-        } else {
-            fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue);
-            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
-        }
-        fragmentContainer.setPostInterfaces(this);
     }
 
     public void setContainerIfaces(FContainerIfaces ifaces) {
@@ -268,7 +273,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    // TODO implement actions for bottom toolbar
                     case R.id.action_bold:
                         RichTextView boldText = new RichTextView(RichTextView.BOLD);
                         containerIfaces.showTextWithRitchText(boldText.getBoldText(textSelected, startSelection, endSelection), edtx);
@@ -285,6 +289,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                         animateBottomToolbar();
                         break;
                     case R.id.action_size:
+                        // TODO implement size for the textview
                         RichTextView sizeText = new RichTextView(RichTextView.SIZE);
                         animateBottomToolbar();
                         break;
@@ -300,7 +305,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void getValues() {
-        startSelection = edtx.getText().toString().length() - edtx.getText().toString().length();
+        startSelection = 0;
         endSelection = edtx.getText().toString().length();
         textSelected = edtx.getText().toString().substring(startSelection, endSelection);
     }
@@ -312,9 +317,9 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void takeSnapMap(Bitmap bitmap) {
+    public void takeSnapMap(Bitmap bitmap,  double latitude, double longitude) {
         Fragment fragment = getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        ((FragmentContainer)fragment).setSnapMap(bitmap);
+        ((FragmentContainer)fragment).setSnapMap(bitmap, latitude, longitude);
     }
 
     @Override
@@ -345,7 +350,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                         @Override
                         public void onInput(MaterialDialog dialog, CharSequence input) {
                             if (input != null && input.length() > 0) {
-                                animateBottomToolbar();
                                 containerIfaces.receiveText(input.toString(), editText.getId());
                                 getValues();
                             }
@@ -360,7 +364,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                         @Override
                         public void onInput(MaterialDialog dialog, CharSequence input) {
                             if (input != null && input.length() > 0) {
-                                animateBottomToolbar();
                                 containerIfaces.receiveText(input.toString(), editText.getId());
                                 getValues();
                             }
@@ -369,7 +372,5 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         }
 
     }
-
-
 
 }

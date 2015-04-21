@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -23,7 +22,6 @@ import com.afollestad.materialdialogs.Theme;
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.adapters.AdapterBlogList;
 import com.defch.blogwbly.adapters.LayoutsViewAdapter;
-import com.defch.blogwbly.model.BlogPost;
 
 import java.util.ArrayList;
 
@@ -42,8 +40,6 @@ public class MainActivity extends BaseActivity {
 
     @InjectView(R.id.mtoolbar)
     Toolbar mToolBar;
-    @InjectView(R.id.pb)
-    ProgressBar progressBar;
 
     private ArrayList<Bitmap> bitmaps;
 
@@ -61,8 +57,19 @@ public class MainActivity extends BaseActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setOnScrollListener(scrollListener);
         new LoadLayoutsViewTask().execute();
-        new LoadPostTask().execute();
+        loadIfExistPosts();
+    }
 
+    private void loadIfExistPosts() {
+        if(app.getPosts().size() > 0) {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyImg.setVisibility(View.GONE);
+            mAdapter = new AdapterBlogList(MainActivity.this, app.getPosts());
+            recyclerView.setAdapter(mAdapter);
+        } else {
+            emptyImg.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
     }
 
     private void setupToolbar() {
@@ -176,37 +183,6 @@ public class MainActivity extends BaseActivity {
             }
             ar.recycle();
             return bitmaps;
-        }
-    }
-
-    private class LoadPostTask extends AsyncTask<Void, Void, ArrayList<BlogPost>> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected ArrayList<BlogPost> doInBackground(Void... params) {
-            ArrayList<BlogPost> postArrayList = null;
-            postArrayList = app.getSql().getPosts();
-            return postArrayList;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<BlogPost> blogPostArrayList) {
-            super.onPostExecute(blogPostArrayList);
-            if(blogPostArrayList != null && blogPostArrayList.size() > 0) {
-                recyclerView.setVisibility(View.VISIBLE);
-                emptyImg.setVisibility(View.GONE);
-                mAdapter = new AdapterBlogList(MainActivity.this, blogPostArrayList);
-                recyclerView.setAdapter(mAdapter);
-            } else {
-                emptyImg.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-            }
-            progressBar.setVisibility(View.GONE);
         }
     }
 

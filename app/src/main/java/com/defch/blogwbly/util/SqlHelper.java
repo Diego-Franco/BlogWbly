@@ -15,9 +15,9 @@ import java.util.ArrayList;
  * Created by DiegoFranco on 4/17/15.
  */
 public class SqlHelper extends SQLiteOpenHelper {
-    private static final String TAG = "SqlHelper";
+    private static final String TAG = SqlHelper.class.getSimpleName();
 
-    private static final int DB_VERSION = 5;
+    private static final int DB_VERSION = 1;
 
     private static final String DB_NAME = "weebly.db";
 
@@ -32,6 +32,7 @@ public class SqlHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(DBMethods.PublishC.CREATE_TABLE_SQL);
+        LogUtil.v(TAG, "post table created");
     }
 
     @Override
@@ -63,10 +64,8 @@ public class SqlHelper extends SQLiteOpenHelper {
      * @param bPost
      */
     public void insertPost(@NonNull BlogPost bPost) {
-        LogUtil.v(TAG, "Inserting user " + bPost.toString());
-        // Wipe any users before we add the new one in
+        LogUtil.v(TAG, "Inserting post " + bPost.toString());
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(DBMethods.PublishC.TABLE_NAME, null, null);
 
         ContentValues values = new ContentValues();
         values.put(DBMethods.PublishC._ID, bPost.getId());
@@ -76,7 +75,8 @@ public class SqlHelper extends SQLiteOpenHelper {
         values.put(DBMethods.PublishC.COLUMN_LATITUDE, bPost.getLatitude());
         values.put(DBMethods.PublishC.COLUMN_LONGITUDE, bPost.getLongitude());
         values.put(DBMethods.PublishC.COLUMN_LAYOUT_ID, bPost.getLayoutId());
-        db.insert(DBMethods.PublishC.TABLE_NAME, null, values);
+        db.insertWithOnConflict(DBMethods.PublishC.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
     }
 
     /**
@@ -95,6 +95,7 @@ public class SqlHelper extends SQLiteOpenHelper {
         values.put(DBMethods.PublishC.COLUMN_LONGITUDE, bPost.getLongitude());
         values.put(DBMethods.PublishC.COLUMN_LAYOUT_ID, bPost.getLayoutId());
         db.update(DBMethods.PublishC.TABLE_NAME, values, null, null);
+        db.close();
     }
     
 
@@ -125,6 +126,7 @@ public class SqlHelper extends SQLiteOpenHelper {
     public void deletePost(int id) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(String.format(DBMethods.PublishC.DELETE_POST_SQL, id));
+        db.close();
     }
     
 

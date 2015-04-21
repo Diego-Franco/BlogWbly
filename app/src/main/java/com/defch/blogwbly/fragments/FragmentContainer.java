@@ -50,6 +50,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
 
     private static final String TAG = FragmentContainer.class.getSimpleName();
 
+    private static final String FRAGMENT_TAG = "fragment_container";
     private static final String KEY_LAYOUT = "key_layout";
     private static final String POST_VALUE = "post_value";
     private static final String POST_OBJECT = "post_object";
@@ -77,6 +78,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     private int keyLayout;
     private ContainerLayout containerLayout;
     private PostActivity.PostValue postValue;
+    private double latitude, longitude;
 
     private PostInterfaces postInterfaces;
 
@@ -125,7 +127,6 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         this.containerLayout = ContainerLayout.getLatyout(keyLayout);
         this.postValue = (PostActivity.PostValue) getArguments().getSerializable(POST_VALUE);
         this.bPost = getArguments().getParcelable(POST_OBJECT);
-        pictures = new ArrayList<>();
     }
 
     @Override
@@ -148,9 +149,25 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         super.onViewCreated(view, savedInstanceState);
         setupToolbar();
         ((PostActivity)getActivity()).setContainerIfaces(this);
+        title.setFocusable(false);
+        content.setFocusable(false);
         title.setOnLongClickListener(longClickTextView);
         content.setOnLongClickListener(longClickTextView);
         if(postValue == PostActivity.PostValue.VIEW) {
+            if(bPost.getThumbnail() != null) {
+                pictures = new ArrayList<>();
+                BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+                pictureView.setPicture(bPost.getThumbnail());
+                if(bPost.isMapView()) {
+                    pictureView.setLatitude(bPost.getLatitude());
+                    pictureView.setLongitude(bPost.getLongitude());
+                    pictureView.setIsMapPicture(true);
+                }
+                pictures.add(pictureView);
+                setAdapter();
+            }
+            title.setText(bPost.getTitle());
+            content.setText(bPost.getSubtitle());
 
         } else if(postValue == PostActivity.PostValue.CREATE || postValue == PostActivity.PostValue.EDIT) {
 
@@ -164,7 +181,6 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
             return true;
         }
     };
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -189,11 +205,13 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
                 getActivity().finish();
                 break;
             case R.id.action_save:
-                //save the post
+                savePost();
                 menuItemEdit.setVisible(true);
                 break;
             case R.id.action_edit:
-
+                postValue = PostActivity.PostValue.EDIT;
+                FragmentContainer fragmentContainer = FragmentContainer.createInstance(keyLayout, postValue, bPost);
+                getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
                 menuItemSave.setVisible(true);
                 break;
             default:
@@ -202,13 +220,39 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         return super.onOptionsItemSelected(item);
     }
 
+    private void savePost() {
+        if(bPost != null) {
+            bPost.setTitle(title.getText().toString());
+            bPost.setSubtitle(content.getText().toString());
+            if(latitude != Double.MIN_VALUE && longitude != Double.MIN_VALUE) {
+                bPost.setLatitude(latitude);
+                bPost.setLongitude(longitude);
+            }
+            app.updatePostOnDB(bPost);
+        } else {
+            bPost = new BlogPost();
+            if(latitude > 0.0 && longitude > 0.0) {
+                bPost.setLatitude(latitude);
+                bPost.setLongitude(longitude);
+            }
+            bPost.setTitle(title.getText().toString());
+            bPost.setSubtitle(content.getText().toString());
+            bPost.setLayoutId(keyLayout);
+            if(pictures != null) {
+                bPost.setThumbnail(pictures.get(0).getPicture());
+            }
+            app.savePostOnDB(bPost);
+            getActivity().finish();
+        }
+    }
+
     @OnClick({R.id.post_textview_title, R.id.post_textview_text})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.post_textview_title:
             case R.id.post_textview_text:
-                postInterfaces.clickTextToEdit((EditText)v);
+                postInterfaces.clickTextToEdit((EditText) v);
                 break;
         }
     }
@@ -235,7 +279,6 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
                 content.setText(s);
                 break;
         }
-        //TODO get the richtText option and implment on the textview
     }
 
     @Override
@@ -243,6 +286,9 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         super.onActivityResult(requestCode, resultCode, data);
         BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
         Bitmap bmp;
+        if(pictures == null) {
+            pictures = new ArrayList<>();
+        }
         if(data != null) {
             switch (requestCode) {
                 case CAMERA_REQUEST:
@@ -280,7 +326,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     private void setAdapter() {
         if(pictures != null && pictures.size() > 0) {
             if(adapterPictures == null) {
-                adapterPictures = new AdapterPostPictures(pictures, postValue);
+                adapterPictures = new AdapterPostPictures(getActivity(), pictures, postValue);
                 pictureList.setAdapter(adapterPictures);
             } else {
                 adapterPictures.notifyDataSetChanged();
@@ -289,11 +335,13 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         }
     }
 
-    public void setSnapMap(Bitmap bitmap) {
+    public void setSnapMap(Bitmap bitmap, double latitude, double longitude) {
         BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
         pictureView.setPicture(bitmap);
         pictures.add(pictureView);
         setAdapter();
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     String getPath(Uri uri) {

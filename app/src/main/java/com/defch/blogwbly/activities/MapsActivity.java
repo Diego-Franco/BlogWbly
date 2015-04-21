@@ -22,7 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.InjectView;
 
-public class MapsActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class MapsActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMyLocationChangeListener{
 
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "location_updates";
     private static final String LOCATION_KEY = "location";
@@ -51,7 +51,7 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
         setupToolbar();
         updateValuesFromBundle(savedInstanceState);
         setUpMapIfNeeded();
-
+        //TODO receive latitude and longitude from adapter
         Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
         bmp = Bitmap.createBitmap(WIDTH_PX, HEIGHT_PX, conf); // this creates a MUTABLE bitmap
 
@@ -89,6 +89,7 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.getUiSettings().setZoomGesturesEnabled(true);
             mMap.setMyLocationEnabled(true);
+            mMap.setOnMyLocationChangeListener(this);
             buildGoogleApiClient();
 
         }
@@ -138,7 +139,7 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
         @Override
         public void onSnapshotReady(Bitmap bitmap) {
             if(bitmap != null) {
-                snapMap.takeSnapMap(bitmap);
+                snapMap.takeSnapMap(bitmap, mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 MapsActivity.this.finish();
             }
         }
@@ -175,7 +176,7 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void updateUI() {
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 10);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 1);
         mMap.animateCamera(cameraUpdate);
     }
 
@@ -227,5 +228,11 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
 
             updateUI();
         }
+    }
+
+    @Override
+    public void onMyLocationChange(Location location) {
+        mLastLocation = location;
+        updateUI();
     }
 }

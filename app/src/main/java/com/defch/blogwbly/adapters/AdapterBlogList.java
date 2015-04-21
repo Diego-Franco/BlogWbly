@@ -41,7 +41,7 @@ public class AdapterBlogList extends RecyclerView.Adapter<AdapterBlogList.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        BlogPost post = aPosts.get(position);
+        final BlogPost post = aPosts.get(position);
 
         holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -71,19 +71,21 @@ public class AdapterBlogList extends RecyclerView.Adapter<AdapterBlogList.ViewHo
             }
         });
 
-        holder.imageView.setImageBitmap(post.getThumbnail());
+        if(post.getThumbnail() != null) {
+            holder.imageView.setImageBitmap(post.getThumbnail());
+        }
         holder.title.setText(post.getTitle());
         holder.subtitle.setText(post.getSubtitle());
         holder.editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) context).newIntent(PostActivity.class, PostActivity.PostValue.EDIT);
+                ((MainActivity) context).newIntent(PostActivity.class, PostActivity.PostValue.EDIT, post);
             }
         });
         holder.viewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) context).newIntent(PostActivity.class, PostActivity.PostValue.VIEW);
+                ((MainActivity) context).newIntent(PostActivity.class, PostActivity.PostValue.VIEW, post);
             }
         });
     }

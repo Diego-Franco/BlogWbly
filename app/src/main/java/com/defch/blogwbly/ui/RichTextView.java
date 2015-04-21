@@ -8,7 +8,6 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 
-//TODO implement RichTextView
 /**
  * Created by DiegoFranco on 4/19/15.
  */

@@ -17,20 +17,28 @@ public class BlogPost implements Parcelable {
 
     private int id;
     private Bitmap thumbnail;
-    private int latitude;
-    private int longitude;
+    private double latitude;
+    private double longitude;
     private String title;
     private String subtitle;
     private int layoutId;
+
+    private byte[] bitmapArray;
+
+    public BlogPost() {
+
+    }
 
     public BlogPost(Cursor cursor) {
         setId(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_ID));
         setTitle(cursor.getString(DBMethods.PublishC.COLUMN_INDEX_TITLE));
         setSubtitle(cursor.getString(DBMethods.PublishC.COLUMN_INDEX_DESCRIPTION));
         byte[] bArray = cursor.getBlob(DBMethods.PublishC.COLUMN_INDEX_PICTURE);
-        setThumbnail(convertByteArrayToBitmap(bArray));
-        setLatitude(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_LATITUDE));
-        setLongitude(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_LONGITUDE));
+        if(bArray != null) {
+            setThumbnail(convertByteArrayToBitmap(bArray));
+        }
+        setLatitude(cursor.getDouble(DBMethods.PublishC.COLUMN_INDEX_LATITUDE));
+        setLongitude(cursor.getDouble(DBMethods.PublishC.COLUMN_INDEX_LONGITUDE));
         setLayoutId(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_LAYOUT_ID));
     }
 
@@ -48,21 +56,22 @@ public class BlogPost implements Parcelable {
 
     public void setThumbnail(Bitmap thumbnail) {
         this.thumbnail = thumbnail;
+        convertBitmapToArray();
     }
 
-    public int getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(int latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public int getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(int longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -99,13 +108,15 @@ public class BlogPost implements Parcelable {
     }
 
     public byte[] getBitmapArray() {
-        byte[] byteArray = null;
+        return bitmapArray;
+    }
+
+    private void convertBitmapToArray() {
         if(thumbnail != null) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            thumbnail.compress(Bitmap.CompressFormat.PNG, 0, stream);
-            byteArray = stream.toByteArray();
+            thumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            bitmapArray = stream.toByteArray();
         }
-        return byteArray;
     }
 
     private Bitmap convertByteArrayToBitmap(byte[] bitmapdata) {
@@ -128,8 +139,8 @@ public class BlogPost implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(thumbnail);
-        dest.writeInt(latitude);
-        dest.writeInt(longitude);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
         dest.writeString(title);
         dest.writeString(subtitle);
     }

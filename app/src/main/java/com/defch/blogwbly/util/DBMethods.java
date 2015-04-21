@@ -24,12 +24,12 @@ public class DBMethods {
         public static final String CREATE_TABLE_SQL =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
                 " (" + _ID + " INTEGER PRIMARY KEY ASC AUTOINCREMENT, " +
-                COLUMN_TITLE + " TEXT NOT NULL," +
-                COLUMN_DESCRIPTION + " TEXT NOT NULL," +
-                COLUMN_PICTURE + " BLOB," +
-                COLUMN_LATITUDE + " INTEGER," +
-                COLUMN_LONGITUDE + " INTEGER," +
-                COLUMN_LAYOUT_ID + " INTEGER);";
+                COLUMN_TITLE + " TEXT NOT NULL, " +
+                COLUMN_DESCRIPTION + " TEXT NOT NULL, " +
+                COLUMN_PICTURE + " BLOB, " +
+                COLUMN_LATITUDE + " DOUBLE, " +
+                COLUMN_LONGITUDE + " DOUBLE, " +
+                COLUMN_LAYOUT_ID + " INTEGER NOT NULL);";
 
         public static int COLUMN_INDEX_ID = 0;
 

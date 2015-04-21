@@ -7,6 +7,6 @@ import android.graphics.Bitmap;
  */
 public interface IfaceSnapMap {
 
-    public void takeSnapMap(Bitmap bitmap);
+    public void takeSnapMap(Bitmap bitmap, double latitude, double longitude);
 
 }
