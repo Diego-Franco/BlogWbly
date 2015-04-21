@@ -16,4 +16,9 @@
     <dimen name="customview_vertical_margin_close">4dp</dimen>
     <dimen name="customview_image_horizontal_margin">4dp</dimen>
     <dimen name="customview_image_vertical_margin">4dp</dimen>
+
+    <dimen name="size_text_content">18sp</dimen>
+    <dimen name="size_text_title">24sp</dimen>
+
+    <dimen name="height_button_close">30dp</dimen>
 </resources>

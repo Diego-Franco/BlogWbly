@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -23,6 +22,9 @@ import com.defch.blogwbly.R;
 import com.defch.blogwbly.adapters.AdapterBlogList;
 import com.defch.blogwbly.adapters.LayoutsViewAdapter;
 
+import org.lucasr.twowayview.widget.GridLayoutManager;
+import org.lucasr.twowayview.widget.TwoWayView;
+
 import java.util.ArrayList;
 
 import butterknife.InjectView;
@@ -36,7 +38,7 @@ public class MainActivity extends BaseActivity {
     ImageView emptyImg;
 
     @InjectView(R.id.my_recycler_view)
-    RecyclerView recyclerView;
+    TwoWayView recyclerView;
 
     @InjectView(R.id.mtoolbar)
     Toolbar mToolBar;
@@ -44,18 +46,16 @@ public class MainActivity extends BaseActivity {
     private ArrayList<Bitmap> bitmaps;
 
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main_activity);
         setupToolbar();
-
-        recyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setOnScrollListener(scrollListener);
+        if(ismIsTablet()) {
+            ((GridLayoutManager)recyclerView.getLayoutManager()).setNumRows((mAdapter.getItemCount() / 2) + 1);
+        }
         new LoadLayoutsViewTask().execute();
         loadIfExistPosts();
     }

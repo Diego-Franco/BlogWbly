@@ -24,7 +24,7 @@
                 android:id="@+id/post_textview_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="24sp"
+                android:textSize="@dimen/size_text_title"
                 android:hint="@string/title"
                 android:background="@null"/>
 
@@ -33,7 +33,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="3">
+            android:layout_weight="4.8">
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -49,7 +49,7 @@
                     android:id="@+id/post_textview_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/size_text_content"
                     android:hint="@string/text"
                     android:background="@null"/>
                 </LinearLayout>
@@ -60,7 +60,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="5.8">
+            android:layout_weight="4">
 
             <org.lucasr.twowayview.widget.TwoWayView
                 android:id="@+id/list"

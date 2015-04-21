@@ -92,7 +92,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         return fragmentContainer;
     }
 
-    private void createScrollForList() {
+    private void changeLayoutManagerToRecyclerView() {
         switch (keyLayout) {
             case 0:
             case 1:
@@ -331,7 +331,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
             } else {
                 adapterPictures.notifyDataSetChanged();
             }
-            createScrollForList();
+            changeLayoutManagerToRecyclerView();
         }
     }
 

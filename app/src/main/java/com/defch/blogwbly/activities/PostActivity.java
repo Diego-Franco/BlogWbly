@@ -133,7 +133,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.float_gallery_btn:
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                i.setType("*/*");
+                i.setType("image/* video/*");
                 startActivityForResult(i, GALLERY_REQUEST);
                 animateFloatingMenu();
                 break;
@@ -286,11 +286,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                     case R.id.action_underline:
                         RichTextView underLineText = new RichTextView(RichTextView.UNDERLINE);
                         containerIfaces.showTextWithRitchText(underLineText.getUnderlineText(textSelected, startSelection, endSelection), edtx);
-                        animateBottomToolbar();
-                        break;
-                    case R.id.action_size:
-                        // TODO implement size for the textview
-                        RichTextView sizeText = new RichTextView(RichTextView.SIZE);
                         animateBottomToolbar();
                         break;
                     case R.id.action_ok:

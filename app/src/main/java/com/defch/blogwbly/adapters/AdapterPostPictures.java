@@ -1,6 +1,7 @@
 package com.defch.blogwbly.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.VideoView;
 
 import com.defch.blogwbly.R;
+import com.defch.blogwbly.activities.MapsActivity;
 import com.defch.blogwbly.activities.PostActivity;
 import com.defch.blogwbly.ui.BlogPictureView;
+import com.defch.blogwbly.util.LogUtil;
 
 import java.util.ArrayList;
 
@@ -18,6 +21,11 @@ import java.util.ArrayList;
  * Created by DiegoFranco on 4/18/15.
  */
 public class AdapterPostPictures extends RecyclerView.Adapter<AdapterPostPictures.ViewHolder>{
+
+    private static final String TAG = AdapterPostPictures.class.getSimpleName();
+
+    private static final String KEY_LATITUDE = "latitude";
+    private static final String kEY_LONGITUDE = "longitude";
 
     private Context context;
     private ArrayList<BlogPictureView> pictures;
@@ -39,17 +47,21 @@ public class AdapterPostPictures extends RecyclerView.Adapter<AdapterPostPicture
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        BlogPictureView pictureView = pictures.get(position);
+        final BlogPictureView pictureView = pictures.get(position);
         if (pictureView != null) {
             if (pictureView.getPicture() != null) {
                 holder.videoView.setVisibility(View.GONE);
                 holder.imageView.setVisibility(View.VISIBLE);
                 holder.imageView.setImageBitmap(pictureView.getPicture());
                 if(pictureView.isMapPicture()) {
+                    LogUtil.v(TAG, "latitude: " + pictureView.getLatitude() + " , longitude: " + pictureView.getLongitude());
                     holder.imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            Intent i = new Intent(context, MapsActivity.class);
+                            i.putExtra(KEY_LATITUDE, pictureView.getLatitude());
+                            i.putExtra(kEY_LONGITUDE, pictureView.getLongitude());
+                            context.startActivity(i);
                         }
                     });
                 }

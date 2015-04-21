@@ -13,8 +13,6 @@ public class DBMethods {
 
         public static final String COLUMN_DESCRIPTION = "description";
 
-        public static final String COLUMN_PICTURE = "picture";
-
         public static final String COLUMN_LATITUDE = "latitude";
 
         public static final String COLUMN_LONGITUDE = "longitude";
@@ -26,7 +24,6 @@ public class DBMethods {
                 " (" + _ID + " INTEGER PRIMARY KEY ASC AUTOINCREMENT, " +
                 COLUMN_TITLE + " TEXT NOT NULL, " +
                 COLUMN_DESCRIPTION + " TEXT NOT NULL, " +
-                COLUMN_PICTURE + " BLOB, " +
                 COLUMN_LATITUDE + " DOUBLE, " +
                 COLUMN_LONGITUDE + " DOUBLE, " +
                 COLUMN_LAYOUT_ID + " INTEGER NOT NULL);";
@@ -37,13 +34,11 @@ public class DBMethods {
 
         public static int COLUMN_INDEX_DESCRIPTION = 2;
 
-        public static int COLUMN_INDEX_PICTURE = 3;
+        public static int COLUMN_INDEX_LATITUDE = 3;
 
-        public static int COLUMN_INDEX_LATITUDE = 4;
+        public static int COLUMN_INDEX_LONGITUDE = 4;
 
-        public static int COLUMN_INDEX_LONGITUDE = 5;
-
-        public static int COLUMN_INDEX_LAYOUT_ID= 6;
+        public static int COLUMN_INDEX_LAYOUT_ID= 5;
 
         public static final String GET_POST_SQL = "SELECT * FROM " + TABLE_NAME
                 + " ORDER BY " + _ID + " COLLATE NOCASE ASC";

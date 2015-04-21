@@ -68,10 +68,9 @@ public class SqlHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(DBMethods.PublishC._ID, bPost.getId());
+        //values.put(DBMethods.PublishC._ID, bPost.getId());
         values.put(DBMethods.PublishC.COLUMN_TITLE, bPost.getTitle());
         values.put(DBMethods.PublishC.COLUMN_DESCRIPTION, bPost.getSubtitle());
-        values.put(DBMethods.PublishC.COLUMN_PICTURE, bPost.getBitmapArray());
         values.put(DBMethods.PublishC.COLUMN_LATITUDE, bPost.getLatitude());
         values.put(DBMethods.PublishC.COLUMN_LONGITUDE, bPost.getLongitude());
         values.put(DBMethods.PublishC.COLUMN_LAYOUT_ID, bPost.getLayoutId());
@@ -90,7 +89,6 @@ public class SqlHelper extends SQLiteOpenHelper {
         values.put(DBMethods.PublishC._ID, bPost.getId());
         values.put(DBMethods.PublishC.COLUMN_TITLE, bPost.getTitle());
         values.put(DBMethods.PublishC.COLUMN_DESCRIPTION, bPost.getSubtitle());
-        values.put(DBMethods.PublishC.COLUMN_PICTURE, bPost.getBitmapArray());
         values.put(DBMethods.PublishC.COLUMN_LATITUDE, bPost.getLatitude());
         values.put(DBMethods.PublishC.COLUMN_LONGITUDE, bPost.getLongitude());
         values.put(DBMethods.PublishC.COLUMN_LAYOUT_ID, bPost.getLayoutId());

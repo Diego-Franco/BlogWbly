@@ -53,6 +53,7 @@ public class AdapterBlogList extends RecyclerView.Adapter<AdapterBlogList.ViewHo
                     public void onPositive(MaterialDialog dialog) {
                         super.onPositive(dialog);
                         aPosts.remove(position);
+                        ((MainActivity)context).app.deletePostOnDB(post.getId());
                         notifyDataSetChanged();
                     }
 

@@ -14,9 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:orientation="vertical"
-        android:elevation="2dp"
         android:foreground="?android:attr/selectableItemBackground"
-        card_view:cardCornerRadius="4dp"
+        card_view:cardCornerRadius="2dp"
         card_view:cardElevation="2dp"
         card_view:cardBackgroundColor="@color/bg_card">
 
@@ -48,7 +47,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:textStyle="bold"
-                    android:textSize="24sp"
+                    android:textSize="@dimen/size_text_title"
                     android:gravity="center_vertical"
                     android:text="@string/test"
                     android:layout_marginLeft="4dp"
@@ -70,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textStyle="italic"
-                android:textSize="18sp"
+                android:textSize="@dimen/size_text_content"
                 style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"

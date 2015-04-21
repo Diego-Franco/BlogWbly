@@ -20,10 +20,9 @@ import java.util.ArrayList;
 /**
  * Created by DiegoFranco on 4/14/15.
  */
-//TODO create a folder for the images on the posts
-    //TODO create the test classes for the application
-    //TODO pending pagination with infinite scrolling
-    //TODO create the layout for tablets
+//TODO create a folder for the images on the posts - 2
+    //TODO create the test classes for the application - 3
+    //TODO pending pagination with infinite scrolling - 4
 public class MyApplication extends Application {
 
     private static MyApplication instance;

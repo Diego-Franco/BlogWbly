@@ -26,6 +26,8 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private static final String REQUESTING_LOCATION_UPDATES_KEY = "location_updates";
     private static final String LOCATION_KEY = "location";
+    private static final String KEY_LATITUDE = "latitude";
+    private static final String kEY_LONGITUDE = "longitude";
 
     private static final int WIDTH_PX = 500;
     private static final int HEIGHT_PX = 400;
@@ -44,14 +46,23 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private Bitmap bmp;
 
+    private boolean isFromPictureView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_gmap_activity);
         setupToolbar();
         updateValuesFromBundle(savedInstanceState);
+        double lat = getIntent().getDoubleExtra(KEY_LATITUDE, 0.0);
+        double lon = getIntent().getDoubleExtra(kEY_LONGITUDE, 0.0);
+        if(lat > 0.0 && lon > 0.0) {
+            mLastLocation = new Location("picture_location");
+            mLastLocation.setLatitude(lat);
+            mLastLocation.setLongitude(lon);
+            isFromPictureView = true;
+        }
         setUpMapIfNeeded();
-        //TODO receive latitude and longitude from adapter
         Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
         bmp = Bitmap.createBitmap(WIDTH_PX, HEIGHT_PX, conf); // this creates a MUTABLE bitmap
 
@@ -88,8 +99,11 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.getUiSettings().setZoomGesturesEnabled(true);
-            mMap.setMyLocationEnabled(true);
-            mMap.setOnMyLocationChangeListener(this);
+            if(!isFromPictureView) {
+                mMap.setOnMyLocationChangeListener(this);
+            } else {
+                updateUI();
+            }
             buildGoogleApiClient();
 
         }

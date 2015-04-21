@@ -24,7 +24,7 @@
                 android:id="@+id/post_textview_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="24sp"
+                android:textSize="@dimen/size_text_title"
                 android:hint="@string/title"
                 android:background="@null"/>
 
@@ -67,7 +67,7 @@
                         android:id="@+id/post_textview_text"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/size_text_content"
                         android:hint="@string/text"
                         android:background="@null"/>
 

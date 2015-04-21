@@ -25,18 +25,12 @@ public class BlogPost implements Parcelable {
 
     private byte[] bitmapArray;
 
-    public BlogPost() {
-
-    }
+    public BlogPost() { }
 
     public BlogPost(Cursor cursor) {
         setId(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_ID));
         setTitle(cursor.getString(DBMethods.PublishC.COLUMN_INDEX_TITLE));
         setSubtitle(cursor.getString(DBMethods.PublishC.COLUMN_INDEX_DESCRIPTION));
-        byte[] bArray = cursor.getBlob(DBMethods.PublishC.COLUMN_INDEX_PICTURE);
-        if(bArray != null) {
-            setThumbnail(convertByteArrayToBitmap(bArray));
-        }
         setLatitude(cursor.getDouble(DBMethods.PublishC.COLUMN_INDEX_LATITUDE));
         setLongitude(cursor.getDouble(DBMethods.PublishC.COLUMN_INDEX_LONGITUDE));
         setLayoutId(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_LAYOUT_ID));

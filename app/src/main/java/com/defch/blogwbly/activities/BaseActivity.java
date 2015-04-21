@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
 import com.defch.blogwbly.MyApplication;
+import com.defch.blogwbly.R;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.WeeblyThemes;
 import com.defch.blogwbly.util.LogUtil;
@@ -24,7 +25,8 @@ public class BaseActivity extends ActionBarActivity {
     private static final String POST_VALUE = "post_value";
     private static final String POST_OBJECT = "post_object";
 
-    private boolean mIsLandscape = false;
+    private boolean mIsLandscape;
+    private boolean mIsTablet;
 
     public MyApplication app;
     public WeeblyThemes theme;
@@ -43,6 +45,7 @@ public class BaseActivity extends ActionBarActivity {
         theme.applyTheme(getTheme());
         super.onCreate(savedInstanceState);
         mIsLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        mIsTablet = getResources().getBoolean(R.bool.is_tablet);
     }
 
     public void newIntent(Class clazz) {
@@ -97,6 +100,10 @@ public class BaseActivity extends ActionBarActivity {
 
     public boolean isLandscape() {
         return mIsLandscape;
+    }
+
+    public boolean ismIsTablet() {
+        return mIsTablet;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
