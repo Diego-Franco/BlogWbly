@@ -45,7 +45,7 @@
 
         <ImageView
             android:id="@+id/widget_close_btn"
-            android:layout_width="@dimen/height_button_close"
+            android:layout_width="@dimen/size_button_close"
             android:layout_height="match_parent"
             android:src="@mipmap/ic_close"
             android:layout_gravity="right"

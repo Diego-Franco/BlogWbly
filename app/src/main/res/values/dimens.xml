@@ -20,5 +20,5 @@
     <dimen name="size_text_content">18sp</dimen>
     <dimen name="size_text_title">24sp</dimen>
 
-    <dimen name="height_button_close">30dp</dimen>
+    <dimen name="size_button_close">32dp</dimen>
 </resources>

@@ -5,21 +5,23 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.fragments.FragmentBlankContainer;
 import com.defch.blogwbly.fragments.FragmentContainer;
@@ -29,6 +31,7 @@ import com.defch.blogwbly.ifaces.PostInterfaces;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.FloatingButton;
 import com.defch.blogwbly.ui.RichTextView;
+import com.defch.blogwbly.util.LogUtil;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -334,9 +337,22 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         switch (editText.getId()) {
             case R.id.post_textview_title:
             case R.id.post_textview_text:
-                showEditText(editText);
+                //showEditText(editText);
                 edtx = editText;
-
+                edtx.requestFocus();
+                edtx.setFocusableInTouchMode(true);
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(edtx, InputMethodManager.SHOW_IMPLICIT);
+                edtx.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        LogUtil.v(TAG, ((EditText) v).getText().toString());
+                        getValues();
+                    }
+                    return false;
+                }
+            });
                 break;
         }
     }
@@ -352,41 +368,10 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-    public void showEditText(final EditText editText) {
-        if(editText.getText().toString() != null && editText.getText().toString().length() > 0) {
-            new MaterialDialog.Builder(this)
-                    .title(R.string.input)
-                    .titleColorAttr(R.attr.colorAccent)
-                    .theme(Theme.LIGHT)
-                    .content(R.string.input_content)
-                    .inputType(InputType.TYPE_CLASS_TEXT)
-                    .input("", editText.getText().toString(), new MaterialDialog.InputCallback() {
-                        @Override
-                        public void onInput(MaterialDialog dialog, CharSequence input) {
-                            if (input != null && input.length() > 0) {
-                                containerIfaces.receiveText(input.toString(), editText.getId());
-                                getValues();
-                            }
-                        }
-                    }).show();
-        } else {
-            new MaterialDialog.Builder(this)
-                    .title(R.string.input)
-                    .titleColorAttr(R.attr.colorAccent)
-                    .theme(Theme.LIGHT)
-                    .content(R.string.input_content)
-                    .inputType(InputType.TYPE_CLASS_TEXT)
-                    .input(R.string.input_hint, R.string.null_text, new MaterialDialog.InputCallback() {
-                        @Override
-                        public void onInput(MaterialDialog dialog, CharSequence input) {
-                            if (input != null && input.length() > 0) {
-                                containerIfaces.receiveText(input.toString(), editText.getId());
-                                getValues();
-                            }
-                        }
-                    }).show();
-        }
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        app.retrievePostFromDB();
+        newIntent(MainActivity.class);
     }
-
 }

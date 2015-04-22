@@ -26,6 +26,8 @@
                 android:layout_height="match_parent"
                 android:textSize="@dimen/size_text_title"
                 android:hint="@string/title"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:background="@null"/>
 
         </LinearLayout>
@@ -51,6 +53,7 @@
                     android:layout_height="match_parent"
                     android:textSize="@dimen/size_text_content"
                     android:hint="@string/text"
+                    android:imeOptions="actionDone"
                     android:background="@null"/>
                 </LinearLayout>
             </ScrollView>
@@ -67,11 +70,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:twowayview_layoutManager="GridLayoutManager"
-                app:twowayview_numRows="1">
+                app:twowayview_numRows="1"/>
 
-                <requestFocus />
-
-                </org.lucasr.twowayview.widget.TwoWayView>
 
         </LinearLayout>
 

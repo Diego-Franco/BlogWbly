@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.defch.blogwbly.R;
@@ -68,7 +69,12 @@ public class AdapterPostPictures extends RecyclerView.Adapter<AdapterPostPicture
             } else if (pictureView.getVideo() != null) {
                 holder.imageView.setVisibility(View.GONE);
                 holder.videoView.setVisibility(View.VISIBLE);
+                MediaController videoMediaController = new MediaController(context);
                 holder.videoView.setVideoURI(pictureView.getVideo());
+                videoMediaController.setMediaPlayer(holder.videoView);
+                holder.videoView.setMediaController(videoMediaController);
+                holder.videoView.requestFocus();
+                holder.videoView.start();
             }
             if (pValue == PostActivity.PostValue.VIEW) {
                 holder.bntClose.setVisibility(View.GONE);
@@ -84,8 +90,6 @@ public class AdapterPostPictures extends RecyclerView.Adapter<AdapterPostPicture
         }
     }
 
-    //TODO check the videoView, doesn't show the video
-
 
     @Override
     public int getItemCount() {
@@ -93,13 +97,11 @@ public class AdapterPostPictures extends RecyclerView.Adapter<AdapterPostPicture
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        View containerView;
         ImageView imageView;
         VideoView videoView;
         ImageView bntClose;
         public ViewHolder(View v) {
             super(v);
-            containerView = v.findViewById(R.id.container_widget_post_blog);
             imageView = (ImageView)v.findViewById(R.id.widget_img);
             videoView = (VideoView)v.findViewById(R.id.widget_video);
             bntClose = (ImageView)v.findViewById(R.id.widget_close_btn);

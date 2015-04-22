@@ -59,6 +59,10 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if(instance == null) {
+            instance = getInstance(getApplicationContext());
+            LogUtil.v(TAG, "return from looong time on background");
+        }
         fileUtil = FileUtil.getInstance(getApplicationContext());
         sqlHelper = new SqlHelper(getApplicationContext());
         mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -168,4 +172,6 @@ public class MyApplication extends Application {
     public FileUtil getFileUtil() {
         return fileUtil;
     }
+
+
 }
