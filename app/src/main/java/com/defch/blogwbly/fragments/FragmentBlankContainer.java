@@ -56,6 +56,11 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
     private static final int VIDEO_REQUEST = 1002;
     private static final int GALLERY_REQUEST = 1003;
 
+    private static final String RESTORE_TITLE = "title";
+    private static final String RESTORE_CONTENT = "content";
+    private static final String RESTORE_PICTURES = "pictures";
+    private static final String RESTORE_LIST = "listview";
+
     @InjectView(R.id.mtoolbar)
     Toolbar mToolBar;
 
@@ -71,11 +76,17 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
     @InjectView(R.id.list_v)
     TwoWayView listV;
 
+    private String titleSaved, contentSaved;
+    private LISTTYPE listTypeSaved;
 
     private AdapterPostPictures adapterPictures;
     private ArrayList<BlogPictureView> pictures = new ArrayList<>();
 
     private double latitude, longitude;
+
+    public enum LISTTYPE {
+        HORIZONTAL,VERTICAL
+    }
 
     private PostInterfaces postInterfaces;
 
@@ -104,6 +115,37 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
         edtxContent.setOnTouchListener(new DDListener(frameLayout, edtxContent, postInterfaces));
         listH.setOnTouchListener(new DDListener(frameLayout, listH));
         listV.setOnTouchListener(new DDListener(frameLayout, listV));
+        if(savedInstanceState != null) {
+            restoreInstanceState(savedInstanceState);
+        }
+    }
+
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        titleSaved = savedInstanceState.getString(RESTORE_TITLE);
+        contentSaved = savedInstanceState.getString(RESTORE_CONTENT);
+        pictures = savedInstanceState.getParcelableArrayList(RESTORE_PICTURES);
+        listTypeSaved = (LISTTYPE) savedInstanceState.getSerializable(RESTORE_LIST);
+
+        if(titleSaved != null) {
+            edtxTitle.setText(titleSaved);
+            changeTitleVisibility();
+        }
+        if(contentSaved != null) {
+            edtxContent.setText(contentSaved);
+            changeContentVisibility();
+        }
+        if(pictures != null) {
+            setAdapter();
+        } else {
+            pictures = new ArrayList<>();
+        }
+        if(listTypeSaved != null) {
+            if (listTypeSaved == LISTTYPE.HORIZONTAL) {
+                changeHListVisibility();
+            } else if (listTypeSaved == LISTTYPE.VERTICAL) {
+                changeVListVisibility();
+            }
+        }
     }
 
     private void setupToolbar() {
@@ -129,6 +171,8 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().finish();
+                ((PostActivity)getActivity()).app.retrievePostFromDB();
+                ((PostActivity)getActivity()).newIntent(MainActivity.class);
                 break;
             case R.id.action_save:
                 if(validateIfSomeIsVisible() && canSaveThePost()) {
@@ -421,4 +465,24 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(edtxTitle.getText().toString().length() > 0) {
+            outState.putString(RESTORE_TITLE, edtxTitle.getText().toString());
+        }
+        if(edtxContent.getText().toString().length() > 0) {
+            outState.putString(RESTORE_CONTENT, edtxContent.getText().toString());
+        }
+        if(pictures != null) {
+            if(pictures.size() > 0)
+                outState.putParcelableArrayList(RESTORE_PICTURES, pictures);
+        }
+        if(hListIsVisible()) {
+            outState.putSerializable(RESTORE_LIST, LISTTYPE.HORIZONTAL);
+        }
+        if(vListIsVisible()) {
+            outState.putSerializable(RESTORE_LIST, LISTTYPE.VERTICAL);
+        }
+        super.onSaveInstanceState(outState);
+    }
 }

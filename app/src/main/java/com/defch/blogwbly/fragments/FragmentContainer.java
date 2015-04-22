@@ -183,16 +183,25 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
             content.setText(bPost.getSubtitle());
         }
         if(savedInstanceState != null) {
-            titleSaved = savedInstanceState.getString(RESTORE_TITLE);
-            contentSaved = savedInstanceState.getString(RESTORE_CONTENT);
-            pictures = savedInstanceState.getParcelableArrayList(RESTORE_PICTURES);
+            restoreInstateSaved(savedInstanceState);
         }
-        if(titleSaved != null && contentSaved != null) {
+    }
+
+    private void restoreInstateSaved(Bundle savedInstanceState) {
+        titleSaved = savedInstanceState.getString(RESTORE_TITLE);
+        contentSaved = savedInstanceState.getString(RESTORE_CONTENT);
+        pictures = savedInstanceState.getParcelableArrayList(RESTORE_PICTURES);
+
+        if(titleSaved != null) {
             title.setText(titleSaved);
+        }
+        if(contentSaved != null) {
             content.setText(contentSaved);
-            if(pictures != null) {
-                setAdapter();
-            }
+        }
+        if(pictures != null) {
+            setAdapter();
+        } else {
+            pictures = new ArrayList<>();
         }
     }
 
@@ -226,6 +235,8 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().finish();
+                ((PostActivity)getActivity()).app.retrievePostFromDB();
+                ((PostActivity)getActivity()).newIntent(MainActivity.class);
                 break;
             case R.id.action_save:
                 savePost();
@@ -417,7 +428,8 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         if(content.getText().toString().length() > 0) {
             outState.putString(RESTORE_CONTENT, content.getText().toString());
         }
-        if(pictures.size() > 0) {
+        if(pictures != null) {
+            if(pictures.size() > 0)
             outState.putParcelableArrayList(RESTORE_PICTURES, pictures);
         }
         super.onSaveInstanceState(outState);

@@ -13,11 +13,11 @@ import com.defch.blogwbly.ifaces.PostInterfaces;
  */
 public class DDListener implements View.OnTouchListener{
 
-    private int modx = 80;
-    private int mody = 80;
+    private int modx = 50;
+    private int mody = 50;
 
     private long currentTime;
-    private long finishTime = 2500l;
+    private long finishTime = 2200l;
 
     private PostInterfaces postInterfaces;
 
@@ -52,10 +52,12 @@ public class DDListener implements View.OnTouchListener{
                         par.topMargin = (int)event.getRawY() - (v.getHeight());
                         par.leftMargin = (int)event.getRawX() - (v.getWidth()/2);
                         v.setLayoutParams(par);
+                        currentTime = System.currentTimeMillis();
                         break;
                     case MotionEvent.ACTION_UP:
                         //onlong click implementation
-                        if(currentTime >= finishTime) {
+                        long upLong = System.currentTimeMillis() - currentTime;
+                        if(upLong >= finishTime) {
                             postInterfaces.clickTextToEdit((EditText) v);
                             postInterfaces.longClickedOnEditText(true, (EditText) v);
                         }
