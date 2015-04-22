@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.defch.blogwbly.R;
+import com.defch.blogwbly.activities.MainActivity;
 import com.defch.blogwbly.activities.PostActivity;
 import com.defch.blogwbly.adapters.AdapterPostPictures;
 import com.defch.blogwbly.ifaces.FContainerIfaces;
@@ -253,7 +254,8 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
                 bPost.setThumbnails(bmaps);
             }
             app.savePostOnDB(bPost);
-            getActivity().finish();
+            ((PostActivity)getActivity()).app.retrievePostFromDB();
+            ((PostActivity)getActivity()).newIntent(MainActivity.class);
         }
     }
 

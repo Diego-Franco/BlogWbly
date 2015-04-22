@@ -13,7 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -22,6 +24,7 @@ import com.defch.blogwbly.R;
 import com.defch.blogwbly.adapters.AdapterBlogList;
 import com.defch.blogwbly.adapters.LayoutsViewAdapter;
 import com.defch.blogwbly.model.BlogPost;
+import com.defch.blogwbly.ui.HidingScrollListener;
 import com.defch.blogwbly.util.FileUtil;
 
 import org.lucasr.twowayview.widget.GridLayoutManager;
@@ -32,13 +35,14 @@ import java.util.ArrayList;
 import butterknife.InjectView;
 import butterknife.Optional;
 
-//TODO reload all item from db and fill the list
 public class MainActivity extends BaseActivity{
 
     @Optional
     @InjectView(R.id.main_img_empty)
     ImageView emptyImg;
 
+    @InjectView(R.id.layout)
+    LinearLayout layout;
     @InjectView(R.id.my_recycler_view)
     TwoWayView recyclerView;
 
@@ -77,25 +81,21 @@ public class MainActivity extends BaseActivity{
         setSupportActionBar(mToolBar);
     }
 
-    RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            float y = recyclerView.getY();
-            if (y < dy ) {
-                mToolBar.animate()
-                        .translationY(-mToolBar.getBottom())
-                        .setInterpolator(new AccelerateInterpolator())
-                        .start();
-            } else {
-                mToolBar.animate()
-                        .translationY(0)
-                        .setInterpolator(new AccelerateInterpolator())
-                        .start();
-            }
+    HidingScrollListener scrollListener = new HidingScrollListener() {
 
+        @Override
+        public void onHide() {
+            mToolBar.animate().translationY(-mToolBar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+            layout.animate().translationY(-mToolBar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+        }
+
+        @Override
+        public void onShow() {
+            mToolBar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+            layout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
         }
     };
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -129,6 +129,7 @@ public class MainActivity extends BaseActivity{
             public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                 newIntent(PostActivity.class, PostActivity.PostValue.CREATE, which);
                 dialog.dismiss();
+                MainActivity.this.finish();
             }
         });
         MaterialDialog dialog = dialogB.build();

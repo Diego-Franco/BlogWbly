@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.defch.blogwbly.R;
+import com.defch.blogwbly.activities.MainActivity;
 import com.defch.blogwbly.activities.PostActivity;
 import com.defch.blogwbly.adapters.AdapterPostPictures;
 import com.defch.blogwbly.ifaces.FContainerIfaces;
@@ -184,7 +185,8 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
                 blogPost.setThumbnails(bmaps);
             }
             app.savePostOnDB(blogPost);
-            getActivity().finish();
+        ((PostActivity)getActivity()).app.retrievePostFromDB();
+        ((PostActivity)getActivity()).newIntent(MainActivity.class);
     }
 
     @Override
