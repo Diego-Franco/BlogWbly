@@ -7,13 +7,15 @@ import android.os.Parcelable;
 
 import com.defch.blogwbly.util.DBMethods;
 
+import java.util.ArrayList;
+
 /**
  * Created by DiegoFranco on 4/17/15.
  */
 public class BlogPost implements Parcelable {
 
     private int id;
-    private Bitmap thumbnail;
+    private ArrayList<Bitmap> thumbnails;
     private double latitude;
     private double longitude;
     private String title;
@@ -29,6 +31,7 @@ public class BlogPost implements Parcelable {
         setLatitude(cursor.getDouble(DBMethods.PublishC.COLUMN_INDEX_LATITUDE));
         setLongitude(cursor.getDouble(DBMethods.PublishC.COLUMN_INDEX_LONGITUDE));
         setLayoutId(cursor.getInt(DBMethods.PublishC.COLUMN_INDEX_LAYOUT_ID));
+        //setThumbnails(FileUtil.getImagesFromFolder(id));
     }
 
     public int getId() {
@@ -39,12 +42,12 @@ public class BlogPost implements Parcelable {
         this.id = id;
     }
 
-    public Bitmap getThumbnail() {
-        return thumbnail;
+    public ArrayList<Bitmap> getThumbnails() {
+        return thumbnails;
     }
 
-    public void setThumbnail(Bitmap thumbnail) {
-        this.thumbnail = thumbnail;
+    public void setThumbnails(ArrayList<Bitmap> thumbnails) {
+        this.thumbnails = thumbnails;
     }
 
     public double getLatitude() {
@@ -97,7 +100,12 @@ public class BlogPost implements Parcelable {
 
     protected BlogPost(Parcel in) {
         id = in.readInt();
-        thumbnail = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
+        if (in.readByte() == 0x01) {
+            thumbnails = new ArrayList<Bitmap>();
+            in.readList(thumbnails, Bitmap.class.getClassLoader());
+        } else {
+            thumbnails = null;
+        }
         latitude = in.readDouble();
         longitude = in.readDouble();
         title = in.readString();
@@ -113,14 +121,18 @@ public class BlogPost implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeValue(thumbnail);
+        if (thumbnails == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(thumbnails);
+        }
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
         dest.writeString(title);
         dest.writeString(subtitle);
         dest.writeInt(layoutId);
     }
-
 
     @SuppressWarnings("unused")
     public static final Parcelable.Creator<BlogPost> CREATOR = new Parcelable.Creator<BlogPost>() {
@@ -134,4 +146,5 @@ public class BlogPost implements Parcelable {
             return new BlogPost[size];
         }
     };
+
 }

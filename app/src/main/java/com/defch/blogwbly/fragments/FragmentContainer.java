@@ -70,7 +70,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     @InjectView(R.id.list)
     TwoWayView pictureList;
 
-    private MenuItem menuItemEdit, menuItemSave;
+    private MenuItem menuItemSave;
 
     private AdapterPostPictures adapterPictures;
     private ArrayList<BlogPictureView> pictures = new ArrayList<>();
@@ -158,21 +158,22 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         title.setOnLongClickListener(longClickTextView);
         content.setOnLongClickListener(longClickTextView);
 
-        if(postValue == PostActivity.PostValue.VIEW) {
-            if(bPost.getThumbnail() != null) {
-                BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
-                pictureView.setPicture(bPost.getThumbnail());
-                if(bPost.isMapView()) {
-                    pictureView.setLatitude(bPost.getLatitude());
-                    pictureView.setLongitude(bPost.getLongitude());
-                    pictureView.setIsMapPicture(true);
+        if(postValue == PostActivity.PostValue.VIEW || postValue == PostActivity.PostValue.EDIT) {
+            if(bPost.getThumbnails() != null) {
+                for(int i = 0; i < bPost.getThumbnails().size(); i ++) {
+                    BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+                    pictureView.setPicture(bPost.getThumbnails().get(i));
+                    if(bPost.isMapView()) {
+                        pictureView.setLatitude(bPost.getLatitude());
+                        pictureView.setLongitude(bPost.getLongitude());
+                        pictureView.setIsMapPicture(true);
+                    }
+                    pictures.add(pictureView);
                 }
-                pictures.add(pictureView);
                 setAdapter();
             }
             title.setText(bPost.getTitle());
             content.setText(bPost.getSubtitle());
-
         }
     }
 
@@ -193,13 +194,10 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_post, menu);
-        menuItemEdit = menu.findItem(R.id.action_edit);
         menuItemSave = menu.findItem(R.id.action_save);
         if(postValue == PostActivity.PostValue.VIEW) {
-            menuItemEdit.setVisible(true);
             menuItemSave.setVisible(false);
         } else if(postValue == PostActivity.PostValue.CREATE || postValue == PostActivity.PostValue.EDIT) {
-            menuItemEdit.setVisible(false);
             menuItemSave.setVisible(true);
         }
     }
@@ -212,13 +210,6 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
                 break;
             case R.id.action_save:
                 savePost();
-                menuItemEdit.setVisible(true);
-                break;
-            case R.id.action_edit:
-                postValue = PostActivity.PostValue.EDIT;
-                FragmentContainer fragmentContainer = FragmentContainer.createInstance(keyLayout, postValue, bPost);
-                getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
-                menuItemSave.setVisible(true);
                 break;
             default:
                 return true;
@@ -234,6 +225,15 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
                 bPost.setLatitude(latitude);
                 bPost.setLongitude(longitude);
             }
+            if(pictures.size() > 0) {
+                ArrayList<Bitmap> bmaps = new ArrayList<>();
+                for(int i = 0; i < pictures.size(); i++) {
+                    BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+                    pictureView.setPicture(bPost.getThumbnails().get(i));
+                    bmaps.add(pictureView.getPicture());
+                }
+                bPost.setThumbnails(bmaps);
+            }
             app.updatePostOnDB(bPost);
         } else {
             bPost = new BlogPost();
@@ -244,8 +244,13 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
             bPost.setTitle(title.getText().toString());
             bPost.setSubtitle(content.getText().toString());
             bPost.setLayoutId(keyLayout);
-            if(pictures != null) {
-                bPost.setThumbnail(pictures.get(0).getPicture());
+            if(pictures.size() > 0) {
+                ArrayList<Bitmap> bmaps = new ArrayList<>();
+                for(int i = 0; i < pictures.size(); i++) {
+                    BlogPictureView pictureView = pictures.get(i);
+                    bmaps.add(pictureView.getPicture());
+                }
+                bPost.setThumbnails(bmaps);
             }
             app.savePostOnDB(bPost);
             getActivity().finish();

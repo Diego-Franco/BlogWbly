@@ -21,6 +21,8 @@ import com.afollestad.materialdialogs.Theme;
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.adapters.AdapterBlogList;
 import com.defch.blogwbly.adapters.LayoutsViewAdapter;
+import com.defch.blogwbly.model.BlogPost;
+import com.defch.blogwbly.util.FileUtil;
 
 import org.lucasr.twowayview.widget.GridLayoutManager;
 import org.lucasr.twowayview.widget.TwoWayView;
@@ -30,7 +32,8 @@ import java.util.ArrayList;
 import butterknife.InjectView;
 import butterknife.Optional;
 
-public class MainActivity extends BaseActivity {
+//TODO reload all item from db and fill the list
+public class MainActivity extends BaseActivity{
 
     @Optional
     @InjectView(R.id.main_img_empty)
@@ -45,6 +48,7 @@ public class MainActivity extends BaseActivity {
     private ArrayList<Bitmap> bitmaps;
 
     private RecyclerView.Adapter mAdapter;
+    private ArrayList<BlogPost> blogPostArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,20 +60,16 @@ public class MainActivity extends BaseActivity {
             ((GridLayoutManager)recyclerView.getLayoutManager()).setNumRows((mAdapter.getItemCount() / 2) + 1);
         }
         new LoadLayoutsViewTask().execute();
-        loadIfExistPosts();
+        getPostFromDB();
     }
 
-    private void loadIfExistPosts() {
-        if(app.getPosts().size() > 0) {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyImg.setVisibility(View.GONE);
-            mAdapter = new AdapterBlogList(MainActivity.this, app.getPosts());
-            recyclerView.setAdapter(mAdapter);
-        } else {
-            emptyImg.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
+    private void getPostFromDB() {
+        for(int i = 0; i < app.getPosts().size(); i++) {
+            BlogPost p = app.getPosts().get(i);
+            new LoadThumbnailsFromPost(p, i).execute();
         }
     }
+
 
     private void setupToolbar() {
         setStatusBarColor(getResources().getColor(app.getWTheme().darkColor));
@@ -182,6 +182,43 @@ public class MainActivity extends BaseActivity {
             }
             ar.recycle();
             return bitmaps;
+        }
+    }
+
+    private class LoadThumbnailsFromPost extends AsyncTask<Void, Void, Void> {
+
+        BlogPost blogPost;
+        int pos;
+
+        public LoadThumbnailsFromPost(BlogPost blogPost, int position) {
+            this.blogPost = blogPost;
+            this.pos = position;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            ArrayList<Bitmap> pics = FileUtil.getImagesFromFolder(blogPost.getId());
+            blogPost.setThumbnails(pics);
+            blogPostArrayList.add(blogPost);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(blogPostArrayList.size() > 0) {
+                recyclerView.setVisibility(View.VISIBLE);
+                emptyImg.setVisibility(View.GONE);
+                if(mAdapter == null) {
+                    mAdapter = new AdapterBlogList(MainActivity.this, blogPostArrayList);
+                    recyclerView.setAdapter(mAdapter);
+                } else {
+                    mAdapter.notifyDataSetChanged();
+                }
+            } else {
+                emptyImg.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            }
         }
     }
 

@@ -11,11 +11,5 @@
         android:visible="false"
         app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_edit"
-        android:title="@string/action_edit"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:orderInCategory="200"
-        android:visible="false"
-        app:showAsAction="ifRoom"/>
 
 </menu>

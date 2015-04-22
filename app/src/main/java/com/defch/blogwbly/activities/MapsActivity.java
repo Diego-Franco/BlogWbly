@@ -48,6 +48,8 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private Bitmap bmp;
 
+    private MenuItem menuMap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +129,7 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_map, menu);
+        menuMap = menu.findItem(R.id.action_map);
         return true;
     }
 
@@ -191,6 +194,7 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
     private void updateUI() {
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15);
         mMap.animateCamera(cameraUpdate);
+        menuMap.setVisible(true);
     }
 
     @Override

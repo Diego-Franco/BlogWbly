@@ -32,6 +32,7 @@
     <string name="null_text"></string>
 
     <string name="warning_save">Do you need fill the title or content text first, thank you!</string>
+    <string name="warning_pictures">You do not selected any list of pictures</string>
 
 
     <!-- preferences-->

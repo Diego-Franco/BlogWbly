@@ -25,6 +25,8 @@ public class SqlHelper extends SQLiteOpenHelper {
 
     private static SQLiteDatabase mWritableDatabase;
 
+    private long idPost;
+
     public SqlHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -74,7 +76,7 @@ public class SqlHelper extends SQLiteOpenHelper {
         values.put(DBMethods.PublishC.COLUMN_LATITUDE, bPost.getLatitude());
         values.put(DBMethods.PublishC.COLUMN_LONGITUDE, bPost.getLongitude());
         values.put(DBMethods.PublishC.COLUMN_LAYOUT_ID, bPost.getLayoutId());
-        db.insertWithOnConflict(DBMethods.PublishC.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        this.idPost = db.insertWithOnConflict(DBMethods.PublishC.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         db.close();
     }
 
@@ -126,7 +128,10 @@ public class SqlHelper extends SQLiteOpenHelper {
         db.execSQL(String.format(DBMethods.PublishC.DELETE_POST_SQL, id));
         db.close();
     }
-    
+
+    public long getIdPost() {
+        return idPost;
+    }
 
     @Override
     public synchronized void close() {

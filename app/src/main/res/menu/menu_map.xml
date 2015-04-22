@@ -9,6 +9,7 @@
         android:title="@string/action_location"
         android:icon="@android:drawable/ic_menu_camera"
         android:orderInCategory="100"
+        android:visible="false"
         app:showAsAction="ifRoom"/>
 
 </menu>

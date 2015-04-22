@@ -72,7 +72,7 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
 
 
     private AdapterPostPictures adapterPictures;
-    private ArrayList<BlogPictureView> pictures;
+    private ArrayList<BlogPictureView> pictures = new ArrayList<>();
 
     private double latitude, longitude;
 
@@ -174,8 +174,14 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
             blogPost.setTitle(edtxTitle.getText().toString());
             blogPost.setSubtitle(edtxContent.getText().toString());
             blogPost.setLayoutId(5);
-            if(pictures != null) {
-                blogPost.setThumbnail(pictures.get(0).getPicture());
+            if(pictures.size() > 0) {
+                ArrayList<Bitmap> bmaps = new ArrayList<>();
+                for(int i = 0; i < pictures.size(); i++) {
+                    BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+                    pictureView.setPicture(blogPost.getThumbnails().get(i));
+                    bmaps.add(pictureView.getPicture());
+                }
+                blogPost.setThumbnails(bmaps);
             }
             app.savePostOnDB(blogPost);
             getActivity().finish();
@@ -219,42 +225,43 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
-        Bitmap bmp;
-        if(pictures == null) {
-            pictures = new ArrayList<>();
-        }
-        if(data != null) {
-            switch (requestCode) {
-                case CAMERA_REQUEST:
-                    if (resultCode == getActivity().RESULT_OK) {
-                        Bundle extras = data.getExtras();
-                        bmp = (Bitmap) extras.get("data");
-                        pictureView.setPicture(bmp);
+        if(hListIsVisible() || vListIsVisible()) {
+            BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+            Bitmap bmp;
+            if (data != null) {
+                switch (requestCode) {
+                    case CAMERA_REQUEST:
+                        if (resultCode == getActivity().RESULT_OK) {
+                            Bundle extras = data.getExtras();
+                            bmp = (Bitmap) extras.get("data");
+                            pictureView.setPicture(bmp);
+                            pictures.add(pictureView);
+                            setAdapter();
+                        }
+                        break;
+                    case VIDEO_REQUEST:
+                        if (resultCode == getActivity().RESULT_OK) {
+                            Uri videoUri = data.getData();
+                            pictureView.setVideo(videoUri);
+                            pictures.add(pictureView);
+                            setAdapter();
+                        }
+                        break;
+                    case GALLERY_REQUEST:
+                        Uri selectedMediaUri = data.getData();
+                        if (selectedMediaUri.toString().contains("images")) {
+                            bmp = loadImage(selectedMediaUri);
+                            pictureView.setPicture(bmp);
+                        } else if (selectedMediaUri.toString().contains("video")) {
+                            pictureView.setVideo(selectedMediaUri);
+                        }
                         pictures.add(pictureView);
                         setAdapter();
-                    }
-                    break;
-                case VIDEO_REQUEST:
-                    if (resultCode == getActivity().RESULT_OK) {
-                        Uri videoUri = data.getData();
-                        pictureView.setVideo(videoUri);
-                        pictures.add(pictureView);
-                        setAdapter();
-                    }
-                    break;
-                case GALLERY_REQUEST:
-                    Uri selectedMediaUri = data.getData();
-                    if (selectedMediaUri.toString().contains("images")) {
-                        bmp = loadImage(selectedMediaUri);
-                        pictureView.setPicture(bmp);
-                    } else if (selectedMediaUri.toString().contains("video")) {
-                        pictureView.setVideo(selectedMediaUri);
-                    }
-                    pictures.add(pictureView);
-                    setAdapter();
-                    break;
+                        break;
+                }
             }
+        } else {
+            Toast.makeText(getActivity(), R.string.warning_pictures ,Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -283,12 +290,16 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
     }
 
     public void setSnapMap(Bitmap bitmap, double latitude, double longitude) {
-        BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
-        pictureView.setPicture(bitmap);
-        pictures.add(pictureView);
-        setAdapter();
-        this.latitude = latitude;
-        this.longitude = longitude;
+        if(hListIsVisible() || vListIsVisible()) {
+            BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+            pictureView.setPicture(bitmap);
+            pictures.add(pictureView);
+            setAdapter();
+            this.latitude = latitude;
+            this.longitude = longitude;
+        } else {
+            Toast.makeText(getActivity(), R.string.warning_pictures ,Toast.LENGTH_SHORT).show();
+        }
     }
 
     String getPath(Uri uri) {

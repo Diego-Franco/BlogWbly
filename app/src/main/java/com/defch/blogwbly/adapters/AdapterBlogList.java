@@ -72,8 +72,8 @@ public class AdapterBlogList extends RecyclerView.Adapter<AdapterBlogList.ViewHo
             }
         });
 
-        if(post.getThumbnail() != null) {
-            holder.imageView.setImageBitmap(post.getThumbnail());
+        if(post.getThumbnails() != null) {
+            holder.imageView.setImageBitmap(post.getThumbnails().get(0));
         }
         holder.title.setText(post.getTitle());
         holder.subtitle.setText(post.getSubtitle());

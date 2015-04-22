@@ -13,6 +13,8 @@ import com.defch.blogwbly.activities.SettingsActivity;
 import com.defch.blogwbly.ifaces.IfaceSnapMap;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.WeeblyThemes;
+import com.defch.blogwbly.util.FileUtil;
+import com.defch.blogwbly.util.LogUtil;
 import com.defch.blogwbly.util.SqlHelper;
 
 import java.util.ArrayList;
@@ -20,16 +22,19 @@ import java.util.ArrayList;
 /**
  * Created by DiegoFranco on 4/14/15.
  */
-//TODO create a folder for the images on the posts - 2
+//TODO change dialog on editext fragmentcontainer
     //TODO create the test classes for the application - 3
-    //TODO pending pagination with infinite scrolling - 4
 public class MyApplication extends Application {
+
+    private static final String TAG = MyApplication.class.getSimpleName();
 
     private static MyApplication instance;
 
     private SqlHelper sqlHelper;
 
     private SharedPreferences mPref;
+
+    private FileUtil fileUtil;
 
     private IfaceSnapMap ifaceSnapMap;
 
@@ -53,11 +58,12 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        fileUtil = FileUtil.getInstance(getApplicationContext());
         sqlHelper = new SqlHelper(getApplicationContext());
         mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         theme = WeeblyThemes.getThemeFromString(mPref.getString(SettingsActivity.THEME_KEY, "weebly"));
         theme.isDarkTheme = mPref.getBoolean(SettingsActivity.KEY_DARK_THEME, false);
-        new LoadPostTask().execute();
+        retrievePostFromDB();
     }
 
     public WeeblyThemes getWTheme() {
@@ -67,6 +73,7 @@ public class MyApplication extends Application {
     public void setTheme(@NonNull WeeblyThemes theme) {
         this.theme = theme;
     }
+
 
     public SharedPreferences getPreferences() {
         return mPref;
@@ -86,10 +93,20 @@ public class MyApplication extends Application {
 
     public void savePostOnDB(BlogPost post) {
         sqlHelper.insertPost(post);
+        if(post.getThumbnails() != null) {
+            if(post.getId() > 0) {
+                fileUtil.saveImages(post.getThumbnails(), post.getId());
+            } else {
+                fileUtil.saveImages(post.getThumbnails(), (int) sqlHelper.getIdPost());
+            }
+        }
     }
 
     public void updatePostOnDB(BlogPost post) {
         sqlHelper.updatePost(post);
+        if(post.getThumbnails() != null) {
+            fileUtil.saveImages(post.getThumbnails(), post.getId());
+        }
     }
 
     public void deletePostOnDB(int postId) {
@@ -137,7 +154,17 @@ public class MyApplication extends Application {
         @Override
         protected ArrayList<BlogPost> doInBackground(Void... params) {
             posts = sqlHelper.getPosts();
+            LogUtil.v(TAG, Integer.toString(posts.size()));
+            //mainInterface.loadPostFromDB(posts);
             return posts;
         }
+    }
+
+    public void retrievePostFromDB() {
+        new LoadPostTask().execute();
+    }
+
+    public FileUtil getFileUtil() {
+        return fileUtil;
     }
 }

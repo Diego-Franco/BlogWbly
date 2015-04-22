@@ -19,6 +19,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.EditText;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.fragments.FragmentBlankContainer;
 import com.defch.blogwbly.fragments.FragmentContainer;
@@ -93,14 +94,14 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         if(viewIndex != 5) {
             if (post != null) {
                 viewIndex = post.getLayoutId();
-                fragmentContainer = FragmentContainer.createInstance(viewIndex, PostValue.VIEW, post);
+                fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue, post);
                 getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
             } else {
                 fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue);
                 getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
             }
             fragmentContainer.setPostInterfaces(this);
-        } if(viewIndex == 5) {
+        } else if(viewIndex == 5) {
             FragmentBlankContainer fragmentBlankContainer = FragmentBlankContainer.createInstance();
             getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentBlankContainer, FRAGMENT_TAG).commit();
             fragmentBlankContainer.setPostInterfaces(this);
@@ -337,7 +338,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                 edtx = editText;
 
                 break;
-        }g
+        }
     }
 
     @Override
@@ -355,6 +356,8 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         if(editText.getText().toString() != null && editText.getText().toString().length() > 0) {
             new MaterialDialog.Builder(this)
                     .title(R.string.input)
+                    .titleColorAttr(R.attr.colorAccent)
+                    .theme(Theme.LIGHT)
                     .content(R.string.input_content)
                     .inputType(InputType.TYPE_CLASS_TEXT)
                     .input("", editText.getText().toString(), new MaterialDialog.InputCallback() {
@@ -369,6 +372,8 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         } else {
             new MaterialDialog.Builder(this)
                     .title(R.string.input)
+                    .titleColorAttr(R.attr.colorAccent)
+                    .theme(Theme.LIGHT)
                     .content(R.string.input_content)
                     .inputType(InputType.TYPE_CLASS_TEXT)
                     .input(R.string.input_hint, R.string.null_text, new MaterialDialog.InputCallback() {
