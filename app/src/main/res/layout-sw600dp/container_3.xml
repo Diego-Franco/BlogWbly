@@ -26,6 +26,8 @@
                 android:layout_height="match_parent"
                 android:textSize="@dimen/size_text_title"
                 android:hint="@string/title"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:background="@null"/>
 
         </LinearLayout>
@@ -57,6 +59,7 @@
                             android:layout_height="match_parent"
                             android:textSize="@dimen/size_text_content"
                             android:hint="@string/text"
+                            android:imeOptions="actionDone"
                             android:background="@null"/>
 
                     </LinearLayout>
