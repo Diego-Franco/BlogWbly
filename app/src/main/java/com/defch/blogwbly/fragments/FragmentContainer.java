@@ -30,7 +30,6 @@ import com.defch.blogwbly.ifaces.PostInterfaces;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.BlogPictureView;
 import com.defch.blogwbly.ui.ContainerLayout;
-import com.defch.blogwbly.util.LogUtil;
 
 import org.lucasr.twowayview.TwoWayLayoutManager;
 import org.lucasr.twowayview.widget.GridLayoutManager;
@@ -47,7 +46,6 @@ import butterknife.OnClick;
 /**
  * Created by DiegoFranco on 4/18/15.
  */
-//tODO implement saved instance state
 public class FragmentContainer extends FragmentContainerBase implements View.OnClickListener, FContainerIfaces{
 
     private static final String TAG = FragmentContainer.class.getSimpleName();
@@ -84,7 +82,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
 
     private BlogPost bPost;
     private int keyLayout;
-    private ContainerLayout containerLayout;
+    public ContainerLayout containerLayout;
     private PostActivity.PostValue postValue;
     private double latitude, longitude;
 
@@ -140,7 +138,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        LogUtil.v(TAG, Integer.toString(containerLayout.key));
+        //LogUtil.v(TAG, Integer.toString(containerLayout.key));
         return inflater.inflate(containerLayout.layoutId, container, false);
     }
 

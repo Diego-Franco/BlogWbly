@@ -52,8 +52,6 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
 
     @InjectView(R.id.mtoolbar_bottom)
     Toolbar toolbarBottom;
-    @InjectView(R.id.floatMenu)
-    View mFloatMenu;
     @InjectView(R.id.float_video_btn)
     FloatingButton videoButton;
     @InjectView(R.id.float_camera_btn)
@@ -71,12 +69,12 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     private boolean floatMenuOpen = false;
     private boolean bottomToolbarShowing = false;
 
-    private int viewIndex;
+    public int viewIndex;
     private PostValue pValue;
     private BlogPost post;
 
     private FContainerIfaces containerIfaces;
-    private FragmentContainer fragmentContainer;
+    public FragmentContainer fragmentContainer;
     private EditText edtx;
     private String textSelected;
     private int startSelection, endSelection;
@@ -89,7 +87,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_post_activity);
-        loagFloatingButton();
+        loadFloatingButton();
 
         if(savedInstanceState == null) {
             pValue = (PostValue) getIntent().getSerializableExtra(POST_VALUE);
@@ -113,7 +111,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-    private void loagFloatingButton() {
+    private void loadFloatingButton() {
         Resources res = getResources();
         int accentColor = res.getColor(theme.accentColor);
         addButton.setColor(accentColor);

@@ -16,6 +16,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -26,6 +27,7 @@ import com.defch.blogwbly.adapters.LayoutsViewAdapter;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.ui.HidingScrollListener;
 import com.defch.blogwbly.util.FileUtil;
+import com.defch.blogwbly.util.LogUtil;
 
 import org.lucasr.twowayview.widget.GridLayoutManager;
 import org.lucasr.twowayview.widget.TwoWayView;
@@ -36,6 +38,9 @@ import butterknife.InjectView;
 import butterknife.Optional;
 
 public class MainActivity extends BaseActivity{
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String MESSAGE = "hello world";
 
     @Optional
     @InjectView(R.id.main_img_empty)
@@ -63,6 +68,12 @@ public class MainActivity extends BaseActivity{
         new LoadLayoutsViewTask().execute();
         getPostFromDB();
         checkAndroidVersionAndPutLayout();
+        if(getIntent().getAction() != null) {
+            if(getIntent().getAction().equalsIgnoreCase(MESSAGE)) {
+                LogUtil.v(TAG, MESSAGE);
+                Toast.makeText(this, R.string.msg_voice, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void checkAndroidVersionAndPutLayout() {
