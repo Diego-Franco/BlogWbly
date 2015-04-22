@@ -8,14 +8,14 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/toolbar_size"
     android:minHeight="@dimen/toolbar_size"
-    android:background="@color/primary"/>
+    android:background="?attr/colorAccent" />
 
-    <ProgressBar
+<!--    <ProgressBar
     android:id="@+id/pb"
     style="?android:attr/progressBarStyleHorizontal"
     android:indeterminateOnly="true"
     android:layout_width="match_parent"
     android:layout_height="4dp"
     android:layout_below="@+id/mtoolbar"
-    android:visibility="gone"/>
+    android:visibility="gone"/>-->
 </LinearLayout>

@@ -31,6 +31,8 @@
     <string name="input_hint">Some text</string>
     <string name="null_text"></string>
 
+    <string name="warning_save">Do you need fill the title or content text first, thank you!</string>
+
 
     <!-- preferences-->
     <string name="pref_category_title">App Theme</string>

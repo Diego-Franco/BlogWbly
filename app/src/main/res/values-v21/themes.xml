@@ -2,17 +2,7 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowActionBarOverlay">true</item>
-        <item name="android:windowContentOverlay">@null</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-
-    </style>
-
-    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="spinBars">true</item>
-        <item name="color">@android:color/white</item>
     </style>
 
     <style name="Theme_Translucent" parent="Theme_Not_Translucent" />
@@ -33,7 +23,6 @@
     </style>
 
 
-
     <!-- we can remove the cardview bg because don't use-->
     <style name="Theme_Light">
         <item name="android:windowBackground">@color/background_material_light</item>
@@ -45,8 +34,8 @@
         <item name="android:checkboxStyle">@style/CheckBox.Style.Light</item>
         <item name="dropDownListViewStyle">@style/PopupMenuStyle.Light</item>
         <item name="android:colorAccent">@color/accent</item>
-        <item name="android:textColorPrimary">@color/primary_text_default_material_light</item>
-        <item name="android:textColorSecondary">@color/secondary_text_default_material_light</item>
+        <item name="android:textColorPrimary">@color/primary_text_default_material_dark</item>
+        <item name="android:textColorSecondary">?attr/colorAccent</item>
     </style>
 
     <style name="Theme_Weebly_Demo" parent="@style/Theme_Light">

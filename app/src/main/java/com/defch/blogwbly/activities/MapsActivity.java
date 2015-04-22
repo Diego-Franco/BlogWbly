@@ -1,6 +1,8 @@
 package com.defch.blogwbly.activities;
 
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -46,7 +48,6 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private Bitmap bmp;
 
-    private boolean isFromPictureView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +61,7 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
             mLastLocation = new Location("picture_location");
             mLastLocation.setLatitude(lat);
             mLastLocation.setLongitude(lon);
-            isFromPictureView = true;
         }
-        setUpMapIfNeeded();
         Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
         bmp = Bitmap.createBitmap(WIDTH_PX, HEIGHT_PX, conf); // this creates a MUTABLE bitmap
 
@@ -75,6 +74,9 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        upArrow.setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
     }
 
     /**
@@ -99,11 +101,8 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.getUiSettings().setZoomGesturesEnabled(true);
-            if(!isFromPictureView) {
-                mMap.setOnMyLocationChangeListener(this);
-            } else {
-                updateUI();
-            }
+            mMap.setMyLocationEnabled(true);
+            mMap.setOnMyLocationChangeListener(this);
             buildGoogleApiClient();
 
         }
@@ -190,7 +189,7 @@ public class MapsActivity extends BaseActivity implements GoogleApiClient.Connec
     }
 
     private void updateUI() {
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 1);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15);
         mMap.animateCamera(cameraUpdate);
     }
 

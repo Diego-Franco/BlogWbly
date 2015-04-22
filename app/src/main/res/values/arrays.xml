@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="list_arrays">
+        <item>Horizontal List Pictures</item>
+        <item>Vertical List Pictures</item>
+    </string-array>
+
     <array name="view_arrays">
         <item>@mipmap/ic_container1</item>
         <item>@mipmap/ic_container2</item>

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,7 +47,6 @@ import butterknife.OnClick;
  * Created by DiegoFranco on 4/18/15.
  */
 
-//TODO implement new blank view for drag and drop
 public class FragmentContainer extends FragmentContainerBase implements View.OnClickListener, FContainerIfaces{
 
     private static final String TAG = FragmentContainer.class.getSimpleName();
@@ -72,7 +73,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     private MenuItem menuItemEdit, menuItemSave;
 
     private AdapterPostPictures adapterPictures;
-    private ArrayList<BlogPictureView> pictures;
+    private ArrayList<BlogPictureView> pictures = new ArrayList<>();
 
     private BlogPost bPost;
     private int keyLayout;
@@ -142,6 +143,9 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         ((PostActivity)getActivity()).setSupportActionBar(mToolBar);
         ((PostActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((PostActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        upArrow.setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+        ((PostActivity)getActivity()).getSupportActionBar().setHomeAsUpIndicator(upArrow);
     }
 
     @Override
@@ -156,7 +160,6 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
 
         if(postValue == PostActivity.PostValue.VIEW) {
             if(bPost.getThumbnail() != null) {
-                pictures = new ArrayList<>();
                 BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
                 pictureView.setPicture(bPost.getThumbnail());
                 if(bPost.isMapView()) {

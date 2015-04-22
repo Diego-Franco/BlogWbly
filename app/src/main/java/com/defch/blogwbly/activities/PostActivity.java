@@ -20,6 +20,7 @@ import android.widget.EditText;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.defch.blogwbly.R;
+import com.defch.blogwbly.fragments.FragmentBlankContainer;
 import com.defch.blogwbly.fragments.FragmentContainer;
 import com.defch.blogwbly.ifaces.FContainerIfaces;
 import com.defch.blogwbly.ifaces.IfaceSnapMap;
@@ -89,15 +90,21 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         pValue = (PostValue) getIntent().getSerializableExtra(POST_VALUE);
         viewIndex = getIntent().getIntExtra(KEY_LAYOUT, Integer.MIN_VALUE);
         post = getIntent().getParcelableExtra(POST_OBJECT);
-        if(post != null) {
-            viewIndex = post.getLayoutId();
-            fragmentContainer = FragmentContainer.createInstance(viewIndex, PostValue.VIEW, post);
-            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
-        } else {
-            fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue);
-            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+        if(viewIndex != 5) {
+            if (post != null) {
+                viewIndex = post.getLayoutId();
+                fragmentContainer = FragmentContainer.createInstance(viewIndex, PostValue.VIEW, post);
+                getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+            } else {
+                fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue);
+                getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+            }
+            fragmentContainer.setPostInterfaces(this);
+        } if(viewIndex == 5) {
+            FragmentBlankContainer fragmentBlankContainer = FragmentBlankContainer.createInstance();
+            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentBlankContainer, FRAGMENT_TAG).commit();
+            fragmentBlankContainer.setPostInterfaces(this);
         }
-        fragmentContainer.setPostInterfaces(this);
     }
 
     private void loagFloatingButton() {
@@ -133,7 +140,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.float_gallery_btn:
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                i.setType("image/* video/*");
+                i.setType("image/*, video/*");
                 startActivityForResult(i, GALLERY_REQUEST);
                 animateFloatingMenu();
                 break;
@@ -314,7 +321,11 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void takeSnapMap(Bitmap bitmap,  double latitude, double longitude) {
         Fragment fragment = getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        ((FragmentContainer)fragment).setSnapMap(bitmap, latitude, longitude);
+        if(fragment instanceof  FragmentContainer) {
+            ((FragmentContainer) fragment).setSnapMap(bitmap, latitude, longitude);
+        } else if(fragment instanceof FragmentBlankContainer){
+            ((FragmentBlankContainer) fragment).setSnapMap(bitmap, latitude, longitude);
+        }
     }
 
     @Override
@@ -326,7 +337,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                 edtx = editText;
 
                 break;
-        }
+        }g
     }
 
     @Override
