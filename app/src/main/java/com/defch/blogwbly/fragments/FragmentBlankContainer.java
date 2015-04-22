@@ -178,7 +178,7 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
             if(pictures.size() > 0) {
                 ArrayList<Bitmap> bmaps = new ArrayList<>();
                 for(int i = 0; i < pictures.size(); i++) {
-                    BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+                    BlogPictureView pictureView = new BlogPictureView();
                     pictureView.setPicture(blogPost.getThumbnails().get(i));
                     bmaps.add(pictureView.getPicture());
                 }
@@ -228,7 +228,7 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(hListIsVisible() || vListIsVisible()) {
-            BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+            BlogPictureView pictureView = new BlogPictureView();
             Bitmap bmp;
             if (data != null) {
                 switch (requestCode) {
@@ -293,7 +293,7 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
 
     public void setSnapMap(Bitmap bitmap, double latitude, double longitude) {
         if(hListIsVisible() || vListIsVisible()) {
-            BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+            BlogPictureView pictureView = new BlogPictureView();
             pictureView.setPicture(bitmap);
             pictures.add(pictureView);
             setAdapter();

@@ -47,10 +47,14 @@ import butterknife.OnClick;
 /**
  * Created by DiegoFranco on 4/18/15.
  */
-
+//tODO implement saved instance state
 public class FragmentContainer extends FragmentContainerBase implements View.OnClickListener, FContainerIfaces{
 
     private static final String TAG = FragmentContainer.class.getSimpleName();
+
+    private static final String RESTORE_TITLE = "title";
+    private static final String RESTORE_CONTENT = "content";
+    private static final String RESTORE_PICTURES = "pictures";
 
     private static final String FRAGMENT_TAG = "fragment_container";
     private static final String KEY_LAYOUT = "key_layout";
@@ -70,6 +74,8 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
 
     @InjectView(R.id.list)
     TwoWayView pictureList;
+
+    private String titleSaved, contentSaved;
 
     private MenuItem menuItemSave;
 
@@ -162,7 +168,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         if(postValue == PostActivity.PostValue.VIEW || postValue == PostActivity.PostValue.EDIT) {
             if(bPost.getThumbnails() != null) {
                 for(int i = 0; i < bPost.getThumbnails().size(); i ++) {
-                    BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+                    BlogPictureView pictureView = new BlogPictureView();
                     pictureView.setPicture(bPost.getThumbnails().get(i));
                     if(bPost.isMapView()) {
                         pictureView.setLatitude(bPost.getLatitude());
@@ -175,6 +181,18 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
             }
             title.setText(bPost.getTitle());
             content.setText(bPost.getSubtitle());
+        }
+        if(savedInstanceState != null) {
+            titleSaved = savedInstanceState.getString(RESTORE_TITLE);
+            contentSaved = savedInstanceState.getString(RESTORE_CONTENT);
+            pictures = savedInstanceState.getParcelableArrayList(RESTORE_PICTURES);
+        }
+        if(titleSaved != null && contentSaved != null) {
+            title.setText(titleSaved);
+            content.setText(contentSaved);
+            if(pictures != null) {
+                setAdapter();
+            }
         }
     }
 
@@ -229,7 +247,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
             if(pictures.size() > 0) {
                 ArrayList<Bitmap> bmaps = new ArrayList<>();
                 for(int i = 0; i < pictures.size(); i++) {
-                    BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+                    BlogPictureView pictureView = new BlogPictureView();
                     pictureView.setPicture(bPost.getThumbnails().get(i));
                     bmaps.add(pictureView.getPicture());
                 }
@@ -297,11 +315,8 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+        BlogPictureView pictureView = new BlogPictureView();
         Bitmap bmp;
-        if(pictures == null) {
-            pictures = new ArrayList<>();
-        }
         if(data != null) {
             switch (requestCode) {
                 case CAMERA_REQUEST:
@@ -337,7 +352,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     }
 
     private void setAdapter() {
-        if(pictures != null && pictures.size() > 0) {
+        if(pictures.size() > 0) {
             if(adapterPictures == null) {
                 adapterPictures = new AdapterPostPictures(getActivity(), pictures, postValue);
                 pictureList.setAdapter(adapterPictures);
@@ -349,7 +364,7 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
     }
 
     public void setSnapMap(Bitmap bitmap, double latitude, double longitude) {
-        BlogPictureView pictureView = new BlogPictureView(getActivity().getApplicationContext());
+        BlogPictureView pictureView = new BlogPictureView();
         pictureView.setPicture(bitmap);
         pictures.add(pictureView);
         setAdapter();
@@ -393,5 +408,20 @@ public class FragmentContainer extends FragmentContainerBase implements View.OnC
         }
         return bitmap;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(title.getText().toString().length() > 0) {
+            outState.putString(RESTORE_TITLE, title.getText().toString());
+        }
+        if(content.getText().toString().length() > 0) {
+            outState.putString(RESTORE_CONTENT, content.getText().toString());
+        }
+        if(pictures.size() > 0) {
+            outState.putParcelableArrayList(RESTORE_PICTURES, pictures);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
 
 }

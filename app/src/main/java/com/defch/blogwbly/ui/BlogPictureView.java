@@ -1,23 +1,22 @@
 package com.defch.blogwbly.ui;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.widget.RelativeLayout;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by DiegoFranco on 4/17/15.
  */
-public class BlogPictureView extends RelativeLayout {
+public class BlogPictureView implements Parcelable {
 
     private Bitmap bmp;
     private Uri uri;
-    private double latitude, longitude;
+    private double latitude;
+    private double longitude;
     private boolean isMapPicture;
 
-    public BlogPictureView(Context context) {
-        super(context);
-    }
+    public BlogPictureView(){}
 
     public Bitmap getPicture() {
         return bmp;
@@ -58,4 +57,39 @@ public class BlogPictureView extends RelativeLayout {
     public void setIsMapPicture(boolean isMapPicture) {
         this.isMapPicture = isMapPicture;
     }
+
+    protected BlogPictureView(Parcel in) {
+        bmp = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
+        uri = (Uri) in.readValue(Uri.class.getClassLoader());
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+        isMapPicture = in.readByte() != 0x00;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(bmp);
+        dest.writeValue(uri);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeByte((byte) (isMapPicture ? 0x01 : 0x00));
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<BlogPictureView> CREATOR = new Parcelable.Creator<BlogPictureView>() {
+        @Override
+        public BlogPictureView createFromParcel(Parcel in) {
+            return new BlogPictureView(in);
+        }
+
+        @Override
+        public BlogPictureView[] newArray(int size) {
+            return new BlogPictureView[size];
+        }
+    };
 }

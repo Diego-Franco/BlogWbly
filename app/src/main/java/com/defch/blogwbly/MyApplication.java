@@ -22,7 +22,6 @@ import java.util.ArrayList;
 /**
  * Created by DiegoFranco on 4/14/15.
  */
-//TODO change dialog on editext fragmentcontainer
     //TODO create the test classes for the application - 3
     //TODO optional, create a module for android wear
 public class MyApplication extends Application {

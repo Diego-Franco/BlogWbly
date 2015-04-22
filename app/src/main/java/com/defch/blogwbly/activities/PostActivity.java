@@ -91,23 +91,25 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
         setContentView(R.layout.layout_post_activity);
         loagFloatingButton();
 
-        pValue = (PostValue) getIntent().getSerializableExtra(POST_VALUE);
-        viewIndex = getIntent().getIntExtra(KEY_LAYOUT, Integer.MIN_VALUE);
-        post = getIntent().getParcelableExtra(POST_OBJECT);
-        if(viewIndex != 5) {
-            if (post != null) {
-                viewIndex = post.getLayoutId();
-                fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue, post);
-                getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
-            } else {
-                fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue);
-                getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+        if(savedInstanceState == null) {
+            pValue = (PostValue) getIntent().getSerializableExtra(POST_VALUE);
+            viewIndex = getIntent().getIntExtra(KEY_LAYOUT, Integer.MIN_VALUE);
+            post = getIntent().getParcelableExtra(POST_OBJECT);
+            if (viewIndex != 5) {
+                if (post != null) {
+                    viewIndex = post.getLayoutId();
+                    fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue, post);
+                    getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+                } else {
+                    fragmentContainer = FragmentContainer.createInstance(viewIndex, pValue);
+                    getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentContainer, FRAGMENT_TAG).commit();
+                }
+                fragmentContainer.setPostInterfaces(this);
+            } else if (viewIndex == 5) {
+                FragmentBlankContainer fragmentBlankContainer = FragmentBlankContainer.createInstance();
+                getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentBlankContainer, FRAGMENT_TAG).commit();
+                fragmentBlankContainer.setPostInterfaces(this);
             }
-            fragmentContainer.setPostInterfaces(this);
-        } else if(viewIndex == 5) {
-            FragmentBlankContainer fragmentBlankContainer = FragmentBlankContainer.createInstance();
-            getFragmentManager().beginTransaction().replace(R.id.container_views, fragmentBlankContainer, FRAGMENT_TAG).commit();
-            fragmentBlankContainer.setPostInterfaces(this);
         }
     }
 

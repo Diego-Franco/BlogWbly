@@ -53,6 +53,7 @@
                     android:layout_height="match_parent"
                     android:textSize="@dimen/size_text_content"
                     android:hint="@string/text"
+                    android:maxLines="4"
                     android:imeOptions="actionDone"
                     android:background="@null"/>
                 </LinearLayout>

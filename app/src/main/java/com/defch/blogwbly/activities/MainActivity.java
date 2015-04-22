@@ -43,11 +43,12 @@ public class MainActivity extends BaseActivity{
 
     @InjectView(R.id.layout)
     LinearLayout layout;
-    @InjectView(R.id.my_recycler_view)
-    TwoWayView recyclerView;
 
     @InjectView(R.id.mtoolbar)
     Toolbar mToolBar;
+
+    private TwoWayView recyclerView;
+    private RecyclerView supporRecyclerView;
 
     private ArrayList<Bitmap> bitmaps;
 
@@ -59,12 +60,29 @@ public class MainActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_main_activity);
         setupToolbar();
-        recyclerView.setOnScrollListener(scrollListener);
-        if(ismIsTablet()) {
-            ((GridLayoutManager)recyclerView.getLayoutManager()).setNumRows((mAdapter.getItemCount() / 2) + 1);
-        }
         new LoadLayoutsViewTask().execute();
         getPostFromDB();
+        checkAndroidVersionAndPutLayout();
+    }
+
+    private void checkAndroidVersionAndPutLayout() {
+        if(ismIsTablet()) {
+            if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                supporRecyclerView = (RecyclerView)findViewById(R.id.my_recycler_view);
+                supporRecyclerView.setHasFixedSize(true);
+                RecyclerView.LayoutManager layoutManager = new android.support.v7.widget.GridLayoutManager(this, 2);
+                supporRecyclerView.setLayoutManager(layoutManager);
+                supporRecyclerView.setOnScrollListener(scrollListener);
+            } else {
+                recyclerView = (TwoWayView)findViewById(R.id.my_recycler_view);
+                recyclerView.setHasFixedSize(true);
+                ((GridLayoutManager) recyclerView.getLayoutManager()).setNumRows((mAdapter.getItemCount() / 2) + 1);
+                recyclerView.setOnScrollListener(scrollListener);
+            }
+        } else {
+            recyclerView = (TwoWayView)findViewById(R.id.my_recycler_view);
+            recyclerView.setOnScrollListener(scrollListener);
+        }
     }
 
     private void getPostFromDB() {
@@ -73,7 +91,6 @@ public class MainActivity extends BaseActivity{
             new LoadThumbnailsFromPost(p, i).execute();
         }
     }
-
 
     private void setupToolbar() {
         setStatusBarColor(getResources().getColor(app.getWTheme().darkColor));
@@ -208,17 +225,26 @@ public class MainActivity extends BaseActivity{
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if(blogPostArrayList.size() > 0) {
-                recyclerView.setVisibility(View.VISIBLE);
                 emptyImg.setVisibility(View.GONE);
                 if(mAdapter == null) {
                     mAdapter = new AdapterBlogList(MainActivity.this, blogPostArrayList);
-                    recyclerView.setAdapter(mAdapter);
+                    if(supporRecyclerView != null) {
+                        supporRecyclerView.setVisibility(View.VISIBLE);
+                        supporRecyclerView.setAdapter(mAdapter);
+                    } else {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        recyclerView.setAdapter(mAdapter);
+                    }
                 } else {
                     mAdapter.notifyDataSetChanged();
                 }
             } else {
                 emptyImg.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                if(supporRecyclerView != null) {
+                    supporRecyclerView.setVisibility(View.GONE);
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                }
             }
         }
     }
