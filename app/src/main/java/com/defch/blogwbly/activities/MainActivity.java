@@ -40,7 +40,7 @@ import butterknife.Optional;
 public class MainActivity extends BaseActivity{
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String MESSAGE = "hello world";
+    private static final String MESSAGE = "msg";
 
     @Optional
     @InjectView(R.id.main_img_empty)
