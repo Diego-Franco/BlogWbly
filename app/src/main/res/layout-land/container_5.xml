@@ -69,10 +69,11 @@
                         <EditText
                             android:id="@+id/post_textview_text"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:textSize="18sp"
                             android:hint="@string/text"
                             android:imeOptions="actionDone"
+                            android:scrollHorizontally="false"
                             android:background="@null"/>
 
                     </LinearLayout>

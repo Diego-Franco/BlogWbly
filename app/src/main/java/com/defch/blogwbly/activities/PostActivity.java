@@ -335,9 +335,8 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void clickTextToEdit(EditText editText) {
         switch (editText.getId()) {
-            case R.id.post_textview_title:
             case R.id.post_textview_text:
-                //showEditText(editText);
+            case R.id.post_textview_title:
                 edtx = editText;
                 edtx.requestFocus();
                 edtx.setFocusableInTouchMode(true);
@@ -345,15 +344,15 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(edtx, InputMethodManager.SHOW_IMPLICIT);
                 edtx.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        LogUtil.v(TAG, ((EditText) v).getText().toString());
-                        getValues();
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            LogUtil.v(TAG, ((EditText) v).getText().toString());
+                            getValues();
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            });
+                });
                 break;
         }
     }

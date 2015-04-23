@@ -22,6 +22,7 @@ import com.defch.blogwbly.adapters.AdapterBlogList;
 import com.defch.blogwbly.adapters.LayoutsViewAdapter;
 import com.defch.blogwbly.model.BlogPost;
 import com.defch.blogwbly.util.FileUtil;
+import com.defch.blogwbly.util.LogUtil;
 
 import org.lucasr.twowayview.widget.GridLayoutManager;
 import org.lucasr.twowayview.widget.TwoWayView;
@@ -235,4 +236,11 @@ public class MainActivity extends BaseActivity{
         }
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LogUtil.v(TAG, "----------->>>>>>>>>onStop is called");
+        this.finish();
+    }
 }

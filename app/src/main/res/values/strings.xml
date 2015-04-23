@@ -35,6 +35,7 @@
     <string name="warning_save">Do you need fill the title or content text first, thank you!</string>
     <string name="warning_pictures">You do not selected any list of pictures</string>
 
+    <string name="title_changelog_pref">BlogWeebly Changelog</string>
 
     <!-- preferences-->
     <string name="pref_category_title">App Theme</string>
@@ -44,5 +45,36 @@
     <string name="pref_dark_theme_off">Do not use dark theme</string>
     <string name="developer">Developer</string>
     <string name="pref_version">Version</string>
+    <string name="pref_changelog">Change Log</string>
     <string name="title_activity_maps">Map</string>
+
+    <string name="changelog_text">
+        <b><u>Third Party Libraries\n</u></b>
+        <i>Butter-Knife\n</i>
+        - Author : Jake Wharton\n
+        - Url: http://jakewharton.github.io/butterknife/
+        <br>\n\n</br>
+        <i>Material-Dialogs\n</i>
+        - Author : afollestad\n
+        - Url: https://github.com/afollestad/material-dialogs
+        <br>\n\n</br>
+        <i>TwoWay-View\n</i>
+        - Author : lucasr\n
+        - Url: https://github.com/lucasr/twoway-view/
+        <br>\n\n</br>
+        <br><u>Native Libraries\n</u></br>
+        <i>Support AppCompat V7\n</i>
+        - Version : 22.0.0
+        <br>\n\n</br>
+        <i>Support CardView V7\n</i>
+        - Version : 22.0.0
+        <br>\n\n</br>
+        <i>Support RecyclerView V7\n</i>
+        - Version : 22.0.0
+        <br>\n\n</br>
+        <i>Google Play Services\n</i>
+        - Version : 7.0.0
+        <br>\n\n</br>
+        <b>Developed by</b> <i>Diego Franco</i>
+    </string>
 </resources>

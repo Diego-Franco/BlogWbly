@@ -90,8 +90,6 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        LogUtil.v(TAG, "----------->>>>>>>>>onStop is called");
-        this.finish();
     }
 
     @Override

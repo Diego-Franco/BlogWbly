@@ -22,6 +22,7 @@ public class SettingsActivity extends BaseActivity {
 
     public static final String THEME_KEY = "app_theme";
     public static final String KEY_DARK_THEME = "darkTheme";
+    public static final String CHANGELOG_KEY = "changelog";
 
     @InjectView(R.id.mtoolbar)
     Toolbar mToolBar;
@@ -51,6 +52,8 @@ public class SettingsActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
+            app.retrievePostFromDB();
+            newIntent(MainActivity.class);
             return true;
         }
         return super.onOptionsItemSelected(item);

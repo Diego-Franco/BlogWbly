@@ -24,6 +24,12 @@
             android:key="version"
             android:title="@string/pref_version"
             android:enabled="false" />
+
+        <Preference
+            android:key="changelog"
+            android:title="@string/pref_changelog"
+            android:enabled="true"
+            />
     </PreferenceCategory>
 
 </PreferenceScreen>

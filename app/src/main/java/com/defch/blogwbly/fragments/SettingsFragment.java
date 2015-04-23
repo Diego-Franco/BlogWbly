@@ -8,6 +8,8 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.defch.blogwbly.MyApplication;
 import com.defch.blogwbly.R;
 import com.defch.blogwbly.activities.SettingsActivity;
@@ -18,7 +20,7 @@ import com.defch.blogwbly.util.LogUtil;
 /**
  * Created by DiegoFranco on 4/16/15.
  */
-public class SettingsFragment extends PreferenceFragment  implements Preference.OnPreferenceChangeListener{
+public class SettingsFragment extends PreferenceFragment  implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener{
 
     private MyApplication app;
     private boolean mFirstLaunch = true;
@@ -34,6 +36,7 @@ public class SettingsFragment extends PreferenceFragment  implements Preference.
         addPreferencesFromResource(R.xml.settings);
         bindPreference(findPreference(SettingsActivity.THEME_KEY));
         findPreference(SettingsActivity.KEY_DARK_THEME).setOnPreferenceChangeListener(this);
+        findPreference(SettingsActivity.CHANGELOG_KEY).setOnPreferenceClickListener(this);
     }
 
     @Override
@@ -45,6 +48,7 @@ public class SettingsFragment extends PreferenceFragment  implements Preference.
     private void bindPreference(Preference preference) {
         preference.setOnPreferenceChangeListener(this);
         onPreferenceChange(preference, app.getPreferences().getString(preference.getKey(), ""));
+
     }
 
     @Override
@@ -73,6 +77,20 @@ public class SettingsFragment extends PreferenceFragment  implements Preference.
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if(preference.getKey().equalsIgnoreCase(SettingsActivity.CHANGELOG_KEY)) {
+            MaterialDialog.Builder dialogMD = new MaterialDialog.Builder(getActivity());
+            dialogMD.title(R.string.title_changelog_pref);
+            dialogMD.content(R.string.changelog_text);
+
+            MaterialDialog dialog = dialogMD.build();
+            dialog.setActionButton(DialogAction.NEGATIVE, R.string.close);
+            dialog.show();
+        }
+        return true;
     }
 
     @Override
