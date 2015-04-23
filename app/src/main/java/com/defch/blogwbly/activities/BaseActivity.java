@@ -41,7 +41,7 @@ public class BaseActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        app = MyApplication.getInstance(getApplicationContext());
+        app = MyApplication.getInstance();
         theme = app.getWTheme();
         theme.applyTheme(getTheme());
         super.onCreate(savedInstanceState);

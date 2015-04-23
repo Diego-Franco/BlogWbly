@@ -20,7 +20,7 @@ public class FragmentContainerBase extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app = MyApplication.getInstance(getActivity());
+        app = MyApplication.getInstance();
         theme = app.getWTheme();
     }
 

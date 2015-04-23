@@ -29,7 +29,7 @@
             android:layout_height="300dp"
             app:twowayview_layoutManager="ListLayoutManager"
             app:twowayview_numRows="1"
-            android:visibility="goneg">
+            android:visibility="gone">
 
             <requestFocus />
 

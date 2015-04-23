@@ -1,7 +1,6 @@
 package com.defch.blogwbly;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
@@ -43,11 +42,10 @@ public class MyApplication extends Application {
     private ArrayList<BlogPost> posts = new ArrayList<>();
 
     public static MyApplication getInstance() {
-        return getInstance();
-    }
-
-    public static MyApplication getInstance(Context context) {
-        return context != null ? (MyApplication) context.getApplicationContext() : instance;
+        if(instance == null) {
+            instance = new MyApplication();
+        }
+        return instance;
     }
 
     /**

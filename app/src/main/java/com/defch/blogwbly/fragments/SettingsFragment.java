@@ -30,7 +30,7 @@ public class SettingsFragment extends PreferenceFragment  implements Preference.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app = MyApplication.getInstance(getActivity());
+        app = MyApplication.getInstance();
         addPreferencesFromResource(R.xml.settings);
         bindPreference(findPreference(SettingsActivity.THEME_KEY));
         findPreference(SettingsActivity.KEY_DARK_THEME).setOnPreferenceChangeListener(this);
