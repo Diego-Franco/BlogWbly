@@ -6,6 +6,9 @@
     <dimen name="toolbar_size">60dp</dimen>
     <dimen name="toolbar_bottom_size">72dp</dimen>
 
+    <dimen name="widget_post_image_w_size">250dp</dimen>
+    <dimen name="widget_post_image_h_size">300dp</dimen>
+
     <dimen name="floating_button_margin_right">24dp</dimen>
     <dimen name="floating_button_margin_bottom">24dp</dimen>
     <dimen name="f_button_radius_smaller">74dp</dimen>

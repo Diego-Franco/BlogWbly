@@ -17,7 +17,7 @@ public class DDListener implements View.OnTouchListener{
     private int mody = 50;
 
     private long currentTime;
-    private long finishTime = 2200l;
+    private long finishTime = 2500l;
 
     private PostInterfaces postInterfaces;
 

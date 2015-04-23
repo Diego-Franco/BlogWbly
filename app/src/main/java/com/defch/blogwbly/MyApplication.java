@@ -22,8 +22,6 @@ import java.util.ArrayList;
 /**
  * Created by DiegoFranco on 4/14/15.
  */
-    //TODO create the test classes for the application - 3
-    //TODO optional, create a module for android wear
 public class MyApplication extends Application {
 
     private static final String TAG = MyApplication.class.getSimpleName();
