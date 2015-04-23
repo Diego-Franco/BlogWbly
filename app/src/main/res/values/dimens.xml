@@ -24,4 +24,8 @@
     <dimen name="size_text_title">24sp</dimen>
 
     <dimen name="size_button_close">32dp</dimen>
+
+    <dimen name="margin_main">16dp</dimen>
+    <dimen name="margin_top_margin">80dp</dimen>
+    <dimen name="view_size">120dp</dimen>
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toolbar_container"
     android:layout_width="match_parent"
     android:layout_height="@dimen/toolbar_size"
     android:orientation="vertical">
@@ -11,12 +12,4 @@
     android:background="?attr/colorAccent"
     android:elevation="4dp"/>
 
-<!--    <ProgressBar
-    android:id="@+id/pb"
-    style="?android:attr/progressBarStyleHorizontal"
-    android:indeterminateOnly="true"
-    android:layout_width="match_parent"
-    android:layout_height="4dp"
-    android:layout_below="@+id/mtoolbar"
-    android:visibility="gone"/>-->
 </LinearLayout>

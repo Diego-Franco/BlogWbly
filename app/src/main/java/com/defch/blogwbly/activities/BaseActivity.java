@@ -41,7 +41,7 @@ public class BaseActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        app = MyApplication.getInstance();
+        app = MyApplication.getInstance(getApplicationContext());
         theme = app.getWTheme();
         theme.applyTheme(getTheme());
         super.onCreate(savedInstanceState);
@@ -77,7 +77,7 @@ public class BaseActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         if(app == null) {
-            app.getInstance();
+            app.getInstance(getApplicationContext());
             LogUtil.v(TAG, "return from looong time on background");
         }
     }
@@ -90,6 +90,8 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        LogUtil.v(TAG, "----------->>>>>>>>>onStop is called");
+        this.finish();
     }
 
     @Override
@@ -123,7 +125,7 @@ public class BaseActivity extends ActionBarActivity {
     public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onRestoreInstanceState(savedInstanceState, persistentState);
         if(app == null) {
-            app.getInstance();
+            app.getInstance(getApplicationContext());
             LogUtil.v(TAG, "return from looong time on background - restoreInstance");
         }
     }

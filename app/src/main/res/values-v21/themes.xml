@@ -25,7 +25,7 @@
 
     <!-- we can remove the cardview bg because don't use-->
     <style name="Theme_Light">
-        <item name="android:windowBackground">@color/background_material_light</item>
+        <item name="android:windowBackground">@color/bg_window_app</item>
         <item name="android:textColor">@color/primary_text_default_material_light</item>
         <item name="android:textColorHint">@color/secondary_text_default_material_light</item>
         <item name="android:editTextColor">@color/primary_text_default_material_light</item>

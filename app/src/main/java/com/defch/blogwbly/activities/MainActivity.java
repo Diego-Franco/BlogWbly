@@ -12,11 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -25,9 +21,7 @@ import com.defch.blogwbly.R;
 import com.defch.blogwbly.adapters.AdapterBlogList;
 import com.defch.blogwbly.adapters.LayoutsViewAdapter;
 import com.defch.blogwbly.model.BlogPost;
-import com.defch.blogwbly.ui.HidingScrollListener;
 import com.defch.blogwbly.util.FileUtil;
-import com.defch.blogwbly.util.LogUtil;
 
 import org.lucasr.twowayview.widget.GridLayoutManager;
 import org.lucasr.twowayview.widget.TwoWayView;
@@ -46,9 +40,12 @@ public class MainActivity extends BaseActivity{
     @InjectView(R.id.main_img_empty)
     ImageView emptyImg;
 
-    @InjectView(R.id.layout)
-    LinearLayout layout;
-
+  // @InjectView(R.id.layout)
+    //LinearLayout layout;
+    @InjectView(R.id.toolbar_container)
+    View toolbarContainer;
+    @InjectView(R.id.backgroundView)
+    View backgroundView;
     @InjectView(R.id.mtoolbar)
     Toolbar mToolBar;
 
@@ -68,12 +65,6 @@ public class MainActivity extends BaseActivity{
         new LoadLayoutsViewTask().execute();
         getPostFromDB();
         checkAndroidVersionAndPutLayout();
-        if(getIntent().getAction() != null) {
-            if(getIntent().getAction().equalsIgnoreCase(MESSAGE)) {
-                LogUtil.v(TAG, MESSAGE);
-                Toast.makeText(this, R.string.msg_voice, Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private void checkAndroidVersionAndPutLayout() {
@@ -83,16 +74,16 @@ public class MainActivity extends BaseActivity{
                 supporRecyclerView.setHasFixedSize(true);
                 RecyclerView.LayoutManager layoutManager = new android.support.v7.widget.GridLayoutManager(this, 2);
                 supporRecyclerView.setLayoutManager(layoutManager);
-                supporRecyclerView.setOnScrollListener(scrollListener);
+                //supporRecyclerView.setOnScrollListener(scrollListener);
             } else {
                 recyclerView = (TwoWayView)findViewById(R.id.my_recycler_view);
                 recyclerView.setHasFixedSize(true);
                 ((GridLayoutManager) recyclerView.getLayoutManager()).setNumRows((mAdapter.getItemCount() / 2) + 1);
-                recyclerView.setOnScrollListener(scrollListener);
+                //recyclerView.setOnScrollListener(scrollListener);
             }
         } else {
             recyclerView = (TwoWayView)findViewById(R.id.my_recycler_view);
-            recyclerView.setOnScrollListener(scrollListener);
+            //recyclerView.setOnScrollListener(scrollListener);
         }
     }
 
@@ -108,22 +99,6 @@ public class MainActivity extends BaseActivity{
         mToolBar.setBackgroundColor(getResources().getColor(app.getWTheme().primaryColor));
         setSupportActionBar(mToolBar);
     }
-
-    HidingScrollListener scrollListener = new HidingScrollListener() {
-
-        @Override
-        public void onHide() {
-            mToolBar.animate().translationY(-mToolBar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-            layout.animate().translationY(-mToolBar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-        }
-
-        @Override
-        public void onShow() {
-            mToolBar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-            layout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-        }
-    };
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

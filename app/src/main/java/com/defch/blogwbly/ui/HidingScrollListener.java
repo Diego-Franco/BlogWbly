@@ -1,35 +1,107 @@
 package com.defch.blogwbly.ui;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 /**
  * Created by DiegoFranco on 4/22/15.
  */
-public abstract class HidingScrollListener extends RecyclerView.OnScrollListener {
-    private static final int HIDE_THRESHOLD = 20;
-    private int scrolledDistance = 0;
-    private boolean controlsVisible = true;
+public  class HidingScrollListener extends RecyclerView.OnScrollListener {
+
+    private final View toolbarContainer;
+    private final View toolbar;
+    private final View parallaxScrollingView;
+    private final View lastToolbarView;
+
+    private float parallaxScrollingFactor = 0.7f;
+
+    public HidingScrollListener(View toolbarContainer, View toolbar, View lastToolbarView) {
+        this(toolbarContainer, toolbar, lastToolbarView, null);
+    }
+
+    public HidingScrollListener(View toolbarContainer, View toolbar, View lastToolbarView, View parallaxScrollingView) {
+        this.toolbarContainer = toolbarContainer;
+        this.toolbar = toolbar;
+        this.lastToolbarView = lastToolbarView;
+        this.parallaxScrollingView = parallaxScrollingView;
+    }
+
+    public void setParallaxScrollingFactor(float parallaxScrollingFactor) {
+        this.parallaxScrollingFactor = parallaxScrollingFactor;
+    }
 
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
-
-        if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
-            onHide();
-            controlsVisible = false;
-            scrolledDistance = 0;
-        } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
-            onShow();
-            controlsVisible = true;
-            scrolledDistance = 0;
-        }
-
-        if((controlsVisible && dy>0) || (!controlsVisible && dy<0)) {
-            scrolledDistance += dy;
+        scrollColoredViewParallax(dy);
+        if (dy > 0) {
+            hideToolbarBy(dy);
+        } else {
+            showToolbarBy(dy);
         }
     }
 
-    public abstract void onHide();
-    public abstract void onShow();
+    private void scrollColoredViewParallax(int dy) {
+        if (parallaxScrollingView != null) {
+            int absoluteTranslationY = (int) (parallaxScrollingView.getTranslationY() - dy * parallaxScrollingFactor);
+            parallaxScrollingView.setTranslationY(Math.min(absoluteTranslationY, 0));
+        }
+    }
 
+    private void hideToolbarBy(int dy) {
+        if (cannotHideMore(dy)) {
+            toolbarContainer.setTranslationY(-lastToolbarView.getBottom());
+        } else {
+            toolbarContainer.setTranslationY(toolbarContainer.getTranslationY() - dy);
+        }
+    }
+
+    private boolean cannotHideMore(int dy) {
+        return Math.abs(toolbarContainer.getTranslationY() - dy) > lastToolbarView.getBottom();
+    }
+
+
+    protected void showToolbarBy(int dy) {
+        if (cannotShowMore(dy)) {
+            toolbarContainer.setTranslationY(0);
+        } else {
+            toolbarContainer.setTranslationY(toolbarContainer.getTranslationY() - dy);
+        }
+    }
+
+    private boolean cannotShowMore(int dy) {
+        return toolbarContainer.getTranslationY() - dy > 0;
+    }
+
+    @Override
+    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        super.onScrollStateChanged(recyclerView, newState);
+        if(newState == RecyclerView.SCROLL_STATE_IDLE) {
+            if (Math.abs(toolbarContainer.getTranslationY()) > toolbar.getHeight()) {
+                hideToolbar();
+            } else {
+                showToolbar();
+            }
+        } else {
+            toolbarContainer.clearAnimation();
+        }
+    }
+
+    protected void showToolbar() {
+        toolbarContainer.clearAnimation();
+        toolbarContainer
+                .animate()
+                .translationY(0)
+                .start();
+
+    }
+
+    private void hideToolbar() {
+        toolbarContainer.clearAnimation();
+        toolbarContainer
+                .animate()
+                .translationY(-lastToolbarView.getBottom())
+                .start();
+
+    }
 }

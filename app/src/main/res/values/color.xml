@@ -9,7 +9,7 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
 
-    <color name="bg_app">#FFEFF8FB</color>
+    <color name="bg_window_app">#FFDFDFDF</color>
 
     <color name="card_background">#ffffff</color>
     <color name="card_shadow_1">#d4d4d4</color>

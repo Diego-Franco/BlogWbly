@@ -1,34 +1,38 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <include layout="@layout/toolbar"/>
-
-    <LinearLayout
-        android:id="@+id/layout"
+    <View
+        android:id="@+id/backgroundView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:layout_height="@dimen/view_size"
+        android:background="?attr/colorPrimary"/>
+
 
         <org.lucasr.twowayview.widget.TwoWayView
             android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:twowayview_layoutManager="ListLayoutManager"
+            android:paddingLeft="@dimen/margin_main"
+            android:paddingRight="@dimen/margin_main"
+            android:paddingBottom="@dimen/margin_main"
+            android:layout_marginTop="@dimen/margin_top_margin"
             android:visibility="gone"/>
+
 
         <ImageView
             android:id="@+id/main_img_empty"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:gravity="center"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
             android:src="@mipmap/ic_empty"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
             android:visibility="visible"/>
 
-    </LinearLayout>
+    <include layout="@layout/toolbar"/>
 
-</LinearLayout>
+</FrameLayout>

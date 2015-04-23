@@ -1,6 +1,7 @@
 package com.defch.blogwbly;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 /**
  * Created by DiegoFranco on 4/14/15.
  */
+//TODO check the instance when the app stay on backgroud for long time
     //TODO animate the layout on the main activity when scrolling
 public class MyApplication extends Application {
 
@@ -42,10 +44,11 @@ public class MyApplication extends Application {
     private ArrayList<BlogPost> posts = new ArrayList<>();
 
     public static MyApplication getInstance() {
-        if(instance == null) {
-            instance = new MyApplication();
-        }
         return instance;
+    }
+
+    public static MyApplication getInstance(Context context) {
+        return context != null ? (MyApplication) context.getApplicationContext() : instance;
     }
 
     /**
