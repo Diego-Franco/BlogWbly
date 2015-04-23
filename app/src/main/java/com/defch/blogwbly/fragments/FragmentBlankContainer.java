@@ -257,13 +257,13 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
         }
     }
 
+    @Deprecated
     @OnClick({R.id.post_textview_title, R.id.post_textview_text})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.post_textview_title:
             case R.id.post_textview_text:
-
                 break;
         }
     }

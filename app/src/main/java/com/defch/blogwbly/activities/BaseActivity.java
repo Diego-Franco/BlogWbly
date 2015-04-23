@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.ActionBarActivity;
 
 import com.defch.blogwbly.MyApplication;
@@ -75,6 +76,10 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(app == null) {
+            app.getInstance();
+            LogUtil.v(TAG, "return from looong time on background");
+        }
     }
 
     @Override
@@ -90,6 +95,7 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtil.e(TAG, "------------> The Garbage Collector was here!!!! D:");
     }
 
     public boolean isLandscape() {
@@ -107,4 +113,18 @@ public class BaseActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        LogUtil.e(TAG, "------------> The Garbage Collector was here!!!! D: - saveInstance");
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onRestoreInstanceState(savedInstanceState, persistentState);
+        if(app == null) {
+            app.getInstance();
+            LogUtil.v(TAG, "return from looong time on background - restoreInstance");
+        }
+    }
 }

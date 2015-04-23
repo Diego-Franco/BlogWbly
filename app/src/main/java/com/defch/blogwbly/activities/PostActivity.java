@@ -341,6 +341,7 @@ public class PostActivity extends BaseActivity implements View.OnClickListener, 
                 edtx = editText;
                 edtx.requestFocus();
                 edtx.setFocusableInTouchMode(true);
+                edtx.setBackgroundColor(getResources().getColor(android.R.color.transparent));
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(edtx, InputMethodManager.SHOW_IMPLICIT);
                 edtx.setOnEditorActionListener(new TextView.OnEditorActionListener() {

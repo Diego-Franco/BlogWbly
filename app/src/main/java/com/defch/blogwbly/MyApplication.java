@@ -22,6 +22,7 @@ import java.util.ArrayList;
 /**
  * Created by DiegoFranco on 4/14/15.
  */
+    //TODO animate the layout on the main activity when scrolling
 public class MyApplication extends Application {
 
     private static final String TAG = MyApplication.class.getSimpleName();
@@ -42,7 +43,7 @@ public class MyApplication extends Application {
     private ArrayList<BlogPost> posts = new ArrayList<>();
 
     public static MyApplication getInstance() {
-        return instance;
+        return getInstance();
     }
 
     public static MyApplication getInstance(Context context) {
@@ -56,10 +57,6 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(instance == null) {
-            instance = getInstance(getApplicationContext());
-            LogUtil.v(TAG, "return from looong time on background");
-        }
         fileUtil = FileUtil.getInstance(getApplicationContext());
         sqlHelper = new SqlHelper(getApplicationContext());
         mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -169,6 +166,5 @@ public class MyApplication extends Application {
     public FileUtil getFileUtil() {
         return fileUtil;
     }
-
 
 }
