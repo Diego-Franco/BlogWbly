@@ -222,8 +222,8 @@ public class FragmentBlankContainer extends FragmentContainerBase implements Vie
             if(pictures.size() > 0) {
                 ArrayList<Bitmap> bmaps = new ArrayList<>();
                 for(int i = 0; i < pictures.size(); i++) {
-                    BlogPictureView pictureView = new BlogPictureView();
-                    pictureView.setPicture(blogPost.getThumbnails().get(i));
+                    BlogPictureView pictureView = pictures.get(i);
+                    pictureView.setPicture(pictureView.getPicture());
                     bmaps.add(pictureView.getPicture());
                 }
                 blogPost.setThumbnails(bmaps);

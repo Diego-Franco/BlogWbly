@@ -29,8 +29,7 @@
             android:layout_height="300dp"
             app:twowayview_layoutManager="ListLayoutManager"
             app:twowayview_numRows="1"
-            android:visibility="gone"
-            android:background="@drawable/container_margin">
+            android:visibility="goneg">
 
             <requestFocus />
 
